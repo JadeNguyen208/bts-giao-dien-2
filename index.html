@@ -2,286 +2,567 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
 <title>Quản Lý Công Việc</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --green-dark: #1a4a2e; --green-main: #2d6a4f; --green-mid: #3a8a62;
-    --green-light: #52b788; --green-pale: #e8f5ee; --green-bg: #f2f9f5;
-    --gold: #c9a84c; --gold-light: #f0d080;
-    --tb-bg: #fad96a; --tb-border: #f0c840; --tb-logo-text: #7a3a00;
-    --tb-text: #5a2d00; --tb-lunar: #8b4a00; --tb-sep: rgba(90,45,0,0.18);
+    --orange: #FD8A02; --orange-dark: #e07a00;
+    --gold: #C49A3C; --gold-light: #f0d080;
     --burgundy: #6b1a1a;
+    --green-dark: #1a4a2e; --green-main: #2d6a4f; --green-mid: #3a8a62;
     --gray-100: #f8f9fa; --gray-200: #e9ecef; --gray-300: #dee2e6;
     --gray-500: #adb5bd; --gray-600: #6c757d; --gray-800: #343a40;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08); --radius: 10px; --radius-sm: 6px;
+    --shadow-sm: 0 1px 5px rgba(0,0,0,0.06);
+    --radius: 12px;
+
+    /* Opinion box colors */
+    --op-phoi-bg: #EBF4FF;
+    --op-phoi-border: #3B82F6;
+    --op-phoi-tag-bg: #DBEAFE;
+    --op-phoi-tag-color: #1D4ED8;
+    --op-sp-bg: #FFF8EC;
+    --op-sp-border: #F59E0B;
+    --op-sp-tag-bg: #FEF3C7;
+    --op-sp-tag-color: #92400E;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Be Vietnam Pro','Segoe UI',sans-serif; background:var(--green-bg); color:var(--gray-800); font-size:13px; min-height:100vh; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'Be Vietnam Pro','Segoe UI',sans-serif; background:#fdf8ee; color:var(--gray-800); font-size:15px; min-height:100vh; padding-bottom:70px; }
 
-  .topbar { background:var(--tb-bg); border-bottom:2.5px solid var(--tb-border); display:flex; align-items:center; padding:0 20px; height:56px; position:sticky; top:0; z-index:100; box-shadow:0 2px 10px rgba(200,140,0,0.18); }
-  .topbar-brand { display:flex; align-items:center; gap:10px; padding-right:18px; border-right:1.5px solid var(--tb-sep); flex-shrink:0; }
-  .logo-icon { width:32px; height:32px; border-radius:7px; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
-  .app-name { font-size:14px; font-weight:800; color:var(--burgundy); white-space:nowrap; }
-  .topbar-datetime { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 18px; border-right:1.5px solid var(--tb-sep); line-height:1.25; flex-shrink:0; }
-  .topbar-datetime .dt-duong { font-size:12px; font-weight:700; color:var(--tb-text); white-space:nowrap; }
-  .topbar-datetime .dt-am { font-size:10.5px; color:var(--tb-lunar); font-weight:500; white-space:nowrap; }
-  .topbar-nav { display:flex; align-items:center; gap:2px; padding:0 12px; flex:1; }
-  .topbar-nav-item { padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12.5px; font-weight:600; color:var(--tb-text); white-space:nowrap; transition:all 0.15s; display:flex; align-items:center; gap:5px; }
-  .topbar-nav-item:hover { background:rgba(255,255,255,0.35); }
-  .topbar-nav-item.active { background:rgba(255,255,255,0.5); color:var(--burgundy); }
-  .topbar-actions { display:flex; align-items:center; gap:6px; margin-left:auto; flex-shrink:0; }
-  .tb-action { padding:6px 13px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; color:var(--tb-text); border:1.5px solid rgba(90,45,0,0.22); background:rgba(255,255,255,0.3); font-family:inherit; transition:all 0.15s; white-space:nowrap; display:flex; align-items:center; gap:5px; }
-  .tb-action:hover { background:rgba(255,255,255,0.5); border-color:rgba(90,45,0,0.4); }
-  .tb-action.primary { background:var(--green-main); border-color:var(--green-main); color:white; font-weight:700; }
-  .tb-action.primary:hover { background:var(--green-dark); border-color:var(--green-dark); }
-  .user-block { display:flex; flex-direction:row; align-items:center; gap:8px; cursor:pointer; margin-left:4px; flex-shrink:0; }
-  .avatar { width:34px; height:34px; background:var(--tb-logo-text); color:var(--tb-bg); border-radius:8px; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .user-info { display:flex; flex-direction:column; align-items:flex-start; gap:1px; }
-  .user-name { font-size:11px; font-weight:700; color:var(--tb-text); white-space:nowrap; line-height:1.2; }
-  .user-role { font-size:9.5px; color:var(--tb-lunar); font-weight:500; white-space:nowrap; line-height:1.2; }
+  /* ── TOPBAR ── */
+  .mob-topbar {
+    display:flex; align-items:center;
+    background:var(--orange);
+    padding:0 14px; height:58px;
+    position:sticky; top:0; z-index:200;
+    box-shadow:0 2px 8px rgba(200,80,0,.2);
+  }
+  .mob-topbar-left { width:38px; flex-shrink:0; }
+  .mob-topbar-back {
+    width:36px; height:36px; border-radius:8px;
+    background:white; border:none; color:var(--orange);
+    font-size:20px; font-weight:800; display:flex; align-items:center;
+    justify-content:center; cursor:pointer; flex-shrink:0; line-height:1;
+  }
+  .mob-topbar-center { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .mob-topbar-title { font-size:17px; font-weight:800; color:white; line-height:1.2; }
+  .mob-topbar-sub { font-size:11.5px; color:rgba(255,255,255,.9); font-weight:500; }
+  .mob-topbar-sub a, .mob-topbar-sub a:visited { color:rgba(255,255,255,.9); text-decoration:none; }
+  .mob-topbar-filter {
+    width:38px; height:38px; border-radius:10px;
+    background:rgba(255,255,255,.22); border:none; color:white;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; flex-shrink:0; font-size:18px; position:relative;
+  }
+  .mob-filter-badge {
+    position:absolute; top:-3px; right:-3px; width:16px; height:16px;
+    background:#c0392b; border-radius:50%; font-size:10px; font-weight:800;
+    color:white; display:none; align-items:center; justify-content:center;
+  }
+  .mob-filter-badge.show { display:flex; }
 
-  .content { max-width:1480px; margin:0 auto; padding:16px 20px; }
-  .ban-header { background:white; border-radius:var(--radius); padding:14px 20px; margin-bottom:12px; display:flex; align-items:center; box-shadow:var(--shadow-sm); border-left:5px solid var(--green-main); }
-  .ban-info h2 { font-size:22px; font-weight:800; color:var(--green-dark); letter-spacing:0.5px; text-transform:uppercase; }
-  .ban-info .meta { font-size:12.5px; color:#2d3f35; font-weight:600; margin-top:2px; }
-  .ban-info .meta span { color:var(--green-dark); }
+  /* ── CONTENT HEADER ── */
+  .mob-content-hdr {
+    display:flex; align-items:center; justify-content:center;
+    padding:14px 60px 10px 60px; background:white;
+    position:relative; border-bottom:none;
+  }
+  .mob-content-hdr-title { font-size:20px; font-weight:800; color:var(--green-dark); text-transform:uppercase; letter-spacing:.5px; text-align:center; }
+  .mob-add-btn {
+    position:absolute; right:16px;
+    width:36px; height:36px; background:#FFF3CC; border:none; border-radius:10px;
+    color:var(--orange); font-size:22px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; line-height:1;
+  }
 
-  .filter-bar { background:white; border-radius:var(--radius); padding:10px 14px; margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; box-shadow:var(--shadow-sm); }
-  .filter-label { font-size:11.5px; font-weight:700; color:var(--gray-600); white-space:nowrap; }
-  .filter-sep { width:1px; height:22px; background:var(--gray-300); flex-shrink:0; }
+  /* ── SEARCH BAR ── */
+  .mob-search-bar {
+    display:flex; align-items:center; gap:8px;
+    background:white; padding:8px 16px 10px;
+    margin-top:0;
+  }
+  .mob-search-inner {
+    flex:1; display:flex; align-items:center; gap:8px;
+    background:var(--gray-100); border:1.5px solid var(--gray-300);
+    border-radius:22px; padding:7px 14px;
+    transition:border-color .15s;
+  }
+  .mob-search-inner:focus-within { border-color:var(--orange); background:white; }
+  .mob-search-inner svg { width:15px; height:15px; color:var(--gray-500); flex-shrink:0; }
+  .mob-search-inner input { border:none; background:transparent; font-family:inherit; font-size:14px; outline:none; flex:1; }
 
-  .dd-wrap { position:relative; }
-  .dd-btn { padding:6px 12px; border-radius:20px; border:1.5px solid var(--gray-300); background:var(--gray-100); font-family:inherit; font-size:12px; cursor:pointer; color:var(--gray-600); font-weight:600; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:all 0.15s; min-width:155px; justify-content:space-between; }
-  .dd-btn:hover,.dd-btn.open { border-color:var(--green-light); color:var(--green-dark); background:var(--green-pale); }
-  .dd-arrow { font-size:10px; color:var(--gray-500); transition:transform 0.15s; }
-  .dd-btn.open .dd-arrow { transform:rotate(180deg); }
-  .dd-left { display:flex; align-items:center; gap:6px; }
-  .dd-menu { position:absolute; top:calc(100% + 4px); left:0; z-index:300; background:white; border:1.5px solid var(--gray-300); border-radius:var(--radius-sm); box-shadow:0 4px 16px rgba(0,0,0,0.12); min-width:210px; overflow:hidden; display:none; }
-  .dd-menu.open { display:block; }
-  .dd-opt { padding:9px 14px; font-size:12.5px; color:var(--gray-800); cursor:pointer; display:flex; align-items:center; gap:8px; font-weight:500; transition:background 0.12s; }
-  .dd-opt:hover { background:var(--green-pale); color:var(--green-dark); }
-  .dd-opt.selected { background:var(--green-pale); color:var(--green-dark); font-weight:700; }
-  .dd-sep { border:none; border-top:1px solid var(--gray-200); margin:4px 0; }
-  .date-range-row { display:flex; gap:6px; padding:10px 14px; border-top:1px solid var(--gray-200); align-items:center; flex-wrap:wrap; }
-  .date-range-row input { border:1.5px solid var(--gray-300); border-radius:5px; padding:4px 8px; font-family:inherit; font-size:12px; color:var(--gray-800); width:130px; }
-  .dr-apply { padding:4px 10px; background:var(--green-main); color:white; border:none; border-radius:5px; font-family:inherit; font-size:12px; cursor:pointer; font-weight:700; }
+  /* ── STATUS TOGGLE ── */
+  .status-toggle-wrap {
+    display:flex; background:var(--gray-100); border:1.5px solid var(--gray-300);
+    border-radius:20px; padding:2px; flex-shrink:0;
+  }
+  .status-toggle-btn {
+    padding:5px 8px; border-radius:16px; font-size:16px; font-weight:700;
+    cursor:pointer; transition:all .2s; color:var(--burgundy);
+    border:none; background:transparent; font-family:inherit; line-height:1;
+  }
+  .status-toggle-btn.active { background:var(--orange); color:#6b1a1a; box-shadow:0 2px 5px rgba(200,80,0,.25); }
+  .status-toggle-btn:not(.active):hover { color:var(--orange); }
 
-  .table-wrap { background:white; border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden; border:2px solid #2d3f2d; }
-  .task-table { width:100%; border-collapse:collapse; table-layout:fixed; }
-  .task-table colgroup col { width:33.33%; }
-  .task-table thead th { background:var(--green-dark); color:white; padding:10px 14px; text-align:left; font-size:12.5px; font-weight:700; letter-spacing:0.3px; white-space:nowrap; border-right:1px solid rgba(255,255,255,0.15); }
-  .task-table thead th:last-child { border-right:none; }
-  .task-table thead th.col-sp { color:var(--gold-light); }
-  .task-table tbody tr { border-bottom:1.5px solid #b0bfb0; background:#fdf8f0; transition:background 0.12s; }
-  .task-table tbody tr:last-child { border-bottom:none; }
-  .task-table tbody tr:hover { background:#faf0d0; }
-  .task-table td { padding:13px 14px; vertical-align:top; font-size:13px; color:#111a14; font-weight:500; border-right:1.5px solid #b0bfb0; word-break:break-word; }
-  .task-table td:last-child { border-right:none; }
+  /* ── CARD LIST ── */
+  .card-list { padding:0; margin-top:0; }
+  .task-card {
+    background:white; border-bottom:2px solid #6b1a1a;
+    border-left:3px solid var(--orange);
+    padding:15px 16px; margin-bottom:7px;
+  }
+  .task-card:first-child { border-top:2px solid #6b1a1a; }
+  .task-card:last-child { border-bottom:none; margin-bottom:0; }
 
-  .task-header { display:flex; align-items:flex-start; gap:8px; margin-bottom:6px; }
-  .status-dot { flex-shrink:0; width:11px; height:11px; border-radius:50%; margin-top:3px; }
-  .dot-urgent    { background:#c0392b; box-shadow:0 0 0 2px rgba(192,57,43,0.2); }
-  .dot-important { background:#e07b39; box-shadow:0 0 0 2px rgba(224,123,57,0.18); }
-  .dot-waiting   { background:#c9a84c; box-shadow:0 0 0 2px rgba(201,168,76,0.22); }
-  .dot-overdue   { background:#8e44ad; box-shadow:0 0 0 2px rgba(142,68,173,0.2); }
-  .dot-done      { background:#27ae60; box-shadow:0 0 0 2px rgba(39,174,96,0.2); }
-  .task-name { font-weight:800; font-size:14.5px; color:#c0392b; line-height:1.3; }
-  .task-detail-txt { font-size:12.5px; color:#1a2e1a; font-weight:500; margin:5px 0 4px 0; line-height:1.45; }
-  .task-time { font-size:12px; color:var(--burgundy); font-weight:700; display:flex; align-items:center; gap:4px; margin:4px 0; }
-  .task-detail-link { display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:600; color:var(--green-mid); cursor:pointer; margin-top:2px; text-decoration:none; }
-  .task-detail-link:hover { text-decoration:underline; color:var(--green-dark); }
+  /* task header */
+  .task-header { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; }
+  .status-dot { flex-shrink:0; width:11px; height:11px; border-radius:50%; margin-top:5px; }
+  .dot-urgent    { background:#c0392b; box-shadow:0 0 0 3px rgba(192,57,43,.18); }
+  .dot-important { background:#e07b39; box-shadow:0 0 0 3px rgba(224,123,57,.15); }
+  .dot-waiting   { background:#c9a84c; box-shadow:0 0 0 3px rgba(201,168,76,.18); }
+  .dot-done      { background:#27ae60; box-shadow:0 0 0 3px rgba(39,174,96,.18); }
+  .dot-normal    { background:#2d6a4f; box-shadow:0 0 0 3px rgba(45,106,79,.18); }
+  .task-name { font-weight:800; font-size:18px; color:var(--burgundy); line-height:1.3; flex:1; }
+  .chi-tiet-btn {
+    flex-shrink:0; font-size:12px; font-weight:700; color:var(--orange);
+    padding:4px 10px; border:1.5px solid var(--orange); border-radius:7px;
+    cursor:pointer; white-space:nowrap; background:white; font-family:inherit;
+    margin-top:2px;
+  }
+  .task-detail-txt { font-size:13.5px; color:#1a2e1a; font-weight:500; line-height:1.65; margin:5px 0; }
+  .task-time { font-size:13px; color:var(--burgundy); font-weight:700; display:flex; align-items:center; gap:4px; margin-top:6px; }
 
-  .opinion-cell { font-size:12.5px; line-height:1.55; color:#111a14; font-weight:500; }
-  .opinion-author { font-size:11px; color:#2d3f35; margin-top:5px; display:flex; align-items:center; gap:4px; font-weight:600; }
-  .ban-tag { padding:1px 6px; border-radius:4px; font-weight:700; font-size:10.5px; }
-  .tag-normal { background:var(--green-pale); color:#0f2d1c; }
-  .tag-sp { background:#ffe0e0; color:#8b0000; }
-  .tag-bld { background:#fff3cd; color:#7a4a00; }
-  .empty-cell { color:#4a5a4a; font-size:12px; font-style:italic; font-weight:500; }
-  .sp-cell { border-left:2px solid var(--gold); }
-  .sp-bld-block + .sp-bld-block { border-top:1.5px dashed #d4b47a; padding-top:10px; margin-top:10px; }
+  /* ── OPINION BOXES (new design) ── */
+  .opinions-wrap { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
 
-  .bottom-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 2px 4px; flex-wrap:wrap; gap:8px; }
-  .pg-info { font-size:12px; color:var(--gray-600); font-weight:600; }
-  .pg-info strong { color:var(--green-dark); }
-  .pagination { display:flex; align-items:center; gap:4px; }
-  .pg-btn { min-width:32px; height:32px; border-radius:6px; border:1.5px solid var(--gray-300); background:white; color:#2d3f35; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; padding:0 6px; }
-  .pg-btn:hover:not(:disabled) { border-color:var(--green-light); background:var(--green-pale); color:var(--green-dark); }
-  .pg-btn.active { background:var(--green-main); border-color:var(--green-main); color:white; }
-  .pg-btn:disabled { opacity:0.38; cursor:default; }
-  .pg-btn.dots { border:none; background:none; cursor:default; color:var(--gray-600); pointer-events:none; }
+  .op-box {
+    border-radius:10px;
+    padding:12px 14px;
+    border-left:4px solid transparent;
+  }
+  .op-box-phoi {
+    background:var(--op-phoi-bg);
+    border-left-color:var(--op-phoi-border);
+  }
+  .op-box-sp {
+    background:var(--op-sp-bg);
+    border-left-color:var(--op-sp-border);
+  }
 
-  ::-webkit-scrollbar { width:5px; height:5px; }
-  ::-webkit-scrollbar-track { background:var(--gray-100); }
+  .op-box-header {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:8px; gap:8px;
+  }
+  .op-box-tag {
+    font-size:12.5px; font-weight:700; padding:3px 10px; border-radius:20px;
+  }
+  .op-box-tag-phoi {
+    background:var(--op-phoi-tag-bg); color:var(--op-phoi-tag-color);
+  }
+  .op-box-tag-sp {
+    background:var(--op-sp-tag-bg); color:var(--op-sp-tag-color);
+  }
+  .op-box-tag-bld {
+    background:#FEF3C7; color:#92400E;
+  }
+  .op-box-time {
+    font-size:12px; font-weight:700; color:var(--burgundy); white-space:nowrap; flex-shrink:0;
+  }
+  .op-box-text {
+    font-size:13.5px; color:#111a14; font-weight:500; line-height:1.65;
+    margin-bottom:9px;
+  }
+  .op-box-actions {
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+
+  /* like button */
+  .like-wrap { position:relative; display:inline-block; }
+  .op-like-btn {
+    display:inline-flex; align-items:center; gap:5px; font-size:13px;
+    font-weight:600; color:var(--gray-500); cursor:pointer;
+    border:1.5px solid rgba(0,0,0,.12); border-radius:20px; padding:4px 12px;
+    background:rgba(255,255,255,.7); transition:all .15s; font-family:inherit; user-select:none;
+  }
+  .op-like-btn:hover { border-color:var(--gold); color:#a07820; background:white; }
+  .op-like-btn.liked { border-color:#e07b39; color:#e07b39; background:rgba(255,255,255,.9); }
+  .op-like-count { font-size:13px; font-weight:800; min-width:12px; text-align:center; }
+  .likes-popup {
+    position:absolute; bottom:calc(100% + 8px); left:0; z-index:500;
+    background:white; border:1.5px solid var(--gray-300); border-radius:10px;
+    box-shadow:0 6px 24px rgba(0,0,0,.15); padding:10px 14px;
+    min-width:180px; max-width:80vw; display:none; animation:popupAppear .13s ease;
+  }
+  @keyframes popupAppear{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  .likes-popup.open { display:block; }
+  .likes-popup-title { font-size:11px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:.05em; margin-bottom:7px; border-bottom:1px solid var(--gray-200); padding-bottom:5px; }
+  .likes-popup-item { display:flex; align-items:center; gap:7px; padding:4px 0; font-size:13px; font-weight:600; color:var(--gray-800); border-bottom:1px solid #f0f0f0; }
+  .likes-popup-item:last-child { border-bottom:none; }
+  .likes-popup-avatar { width:22px; height:22px; border-radius:5px; background:#fff3cc; color:#a07820; font-size:9px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .likes-popup-empty { font-size:12px; color:var(--gray-500); font-style:italic; text-align:center; padding:3px 0; }
+
+  .op-edit-btn {
+    display:inline-flex; align-items:center; gap:5px; font-size:13px;
+    font-weight:600; color:var(--gray-500); cursor:pointer;
+    border:1.5px solid rgba(0,0,0,.12); border-radius:20px; padding:4px 12px;
+    background:rgba(255,255,255,.7); transition:all .15s; font-family:inherit;
+  }
+  .op-edit-btn:hover { border-color:var(--gold); color:#a07820; background:white; }
+  .op-edited-tag { font-size:12px; color:var(--gray-500); font-style:italic; }
+  .op-edit-area { width:100%; border:1.5px solid var(--gold); border-radius:7px; padding:8px 11px; font-family:inherit; font-size:14px; color:var(--gray-800); outline:none; resize:vertical; min-height:65px; margin-top:5px; background:white; }
+  .op-edit-actions { display:flex; gap:8px; margin-top:6px; }
+  .op-save-btn { padding:5px 14px; background:var(--green-main); color:white; border:none; border-radius:6px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+  .op-cancel-btn { padding:5px 14px; background:white; color:var(--gray-600); border:1.5px solid var(--gray-300); border-radius:6px; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; }
+
+  /* ── OUTGOING CARDS ── */
+  .progress-wrap { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .progress-bar { flex:1; height:7px; background:var(--gray-200); border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:4px; transition:width .3s; }
+  .prog-done    { background:#27ae60; }
+  .prog-partial { background:#e07b39; }
+  .prog-none    { background:#dee2e6; }
+  .progress-pct { font-size:13px; font-weight:700; color:var(--gray-600); flex-shrink:0; }
+  .assigned-ban { font-size:14.5px; font-weight:700; color:var(--green-dark); margin-bottom:3px; }
+  .assigned-note { font-size:13px; color:var(--gray-600); font-weight:500; }
+
+  /* mobile toggles (kept for outgoing cards) */
+  .mobile-toggles { display:flex; gap:7px; flex-wrap:wrap; margin-top:11px; padding-top:10px; border-top:1px solid #f0e4b8; }
+  .mtoggle {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:6px 12px; border-radius:20px;
+    border:1.5px solid var(--gray-300); background:var(--gray-100);
+    font-family:inherit; font-size:13px; font-weight:700;
+    color:var(--gray-600); cursor:pointer; transition:all .15s; white-space:nowrap;
+  }
+  .mtoggle:hover { border-color:var(--gold); background:#FFFDF5; color:#a07820; }
+  .mtoggle.active { border-color:var(--gold); background:#FFF3CC; color:#a07820; }
+  .mtoggle.active .mtoggle-arrow { transform:rotate(180deg); }
+  .mtoggle-count { background:var(--green-main); color:white; border-radius:10px; font-size:11px; font-weight:800; padding:1px 6px; min-width:18px; text-align:center; }
+  .mtoggle.active .mtoggle-count { background:var(--green-dark); }
+  .mtoggle-arrow { font-size:9px; transition:transform .2s; display:inline-block; }
+
+  .expand-col { display:none; margin-top:11px; padding-top:11px; border-top:1.5px dashed #e8d49a; animation:mFadeIn .2s ease; }
+  .expand-col.open { display:block; }
+  @keyframes mFadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+  .expand-label { font-size:11px; font-weight:700; color:var(--green-mid); text-transform:uppercase; letter-spacing:.05em; margin-bottom:7px; }
+  .expand-label.sp { color:var(--burgundy); }
+
+  /* ── PAGINATION ── */
+  .bottom-bar { display:flex; align-items:center; justify-content:space-between; padding:14px 16px 8px; flex-wrap:wrap; gap:8px; background:white; border-top:1px solid var(--gray-200); }
+  .pg-info { font-size:13px; color:var(--gray-600); font-weight:600; }
+  .pg-info strong { color:var(--gold); }
+  .pagination { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+  .pg-btn { min-width:36px; height:36px; border-radius:9px; border:1.5px solid #e8d9a0; background:white; color:var(--gold); font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; padding:0 7px; transition:all .15s; }
+  .pg-btn:hover:not(:disabled) { border-color:var(--gold); background:#FFFDF5; color:#a07820; }
+  .pg-btn.active { background:#FFF3CC; border-color:var(--gold); color:#a07820; font-weight:800; }
+  .pg-btn:disabled { opacity:.35; cursor:default; }
+  .pg-btn.dots { border:none; background:none; pointer-events:none; color:var(--gray-500); }
+
+  /* ── FILTER SHEET ── */
+  .filter-sheet-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:600; }
+  .filter-sheet-overlay.open { display:block; }
+  .filter-sheet {
+    position:fixed; bottom:0; left:0; right:0; z-index:700;
+    background:white; border-radius:20px 20px 0 0;
+    max-height:88vh; transform:translateY(100%);
+    transition:transform .3s cubic-bezier(.32,.72,0,1);
+    display:flex; flex-direction:column;
+    box-shadow:0 -4px 30px rgba(0,0,0,.18);
+  }
+  .filter-sheet.open { transform:translateY(0); }
+  .fs-handle { width:36px; height:4px; border-radius:2px; background:#ddd; margin:12px auto 0; flex-shrink:0; }
+  .fs-header { display:flex; align-items:center; justify-content:space-between; padding:13px 18px 10px; flex-shrink:0; border-bottom:1px solid var(--gray-200); }
+  .fs-title { font-size:15px; font-weight:800; color:#111; }
+  .fs-close { width:30px; height:30px; border-radius:50%; background:var(--gray-100); border:none; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#111; }
+  .fs-body { overflow-y:auto; padding:8px 0; flex:1; }
+
+  .fs-acc { border-bottom:1px solid var(--gray-200); }
+  .fs-acc-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:13px 18px; cursor:pointer; background:white;
+    border:none; width:100%; font-family:inherit; text-align:left;
+  }
+  .fs-acc-header:active { background:#fafafa; }
+  .fs-acc-label { font-size:15px; font-weight:700; color:#111; }
+  .fs-acc-value { font-size:13px; color:var(--burgundy); font-weight:600; margin-right:8px; }
+  .fs-acc-arrow { font-size:11px; color:#666; transition:transform .2s; }
+  .fs-acc-header.open .fs-acc-arrow { transform:rotate(180deg); }
+  .fs-acc-body { display:none; padding:4px 18px 14px; }
+  .fs-acc-body.open { display:block; }
+
+  .fs-opt {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:11px 14px; border-radius:10px; cursor:pointer;
+    font-family:inherit; font-size:14.5px; font-weight:600; color:#111;
+    border:none; background:transparent; width:100%; text-align:left;
+    transition:background .12s;
+  }
+  .fs-opt:hover { background:#fafafa; }
+  .fs-opt.active { background:#FFF3E0; color:var(--orange); }
+  .fs-opt-check { font-size:16px; opacity:0; }
+  .fs-opt.active .fs-opt-check { opacity:1; color:var(--orange); }
+
+  .fs-search { display:flex; align-items:center; gap:8px; background:var(--gray-100); border:1.5px solid var(--gray-300); border-radius:10px; padding:8px 13px; margin:4px 18px 10px; }
+  .fs-search:focus-within { border-color:var(--orange); background:white; }
+  .fs-search svg { width:14px; height:14px; color:#666; flex-shrink:0; }
+  .fs-search input { border:none; background:transparent; font-family:inherit; font-size:14px; outline:none; flex:1; color:#111; }
+  .fs-search input::placeholder { color:#999; }
+
+  .fs-footer { display:flex; gap:10px; padding:11px 18px 20px; flex-shrink:0; border-top:1px solid var(--gray-200); }
+  .fs-reset { flex:1; padding:11px; border:1.5px solid var(--gray-300); background:white; border-radius:10px; font-family:inherit; font-size:14px; font-weight:700; color:#111; cursor:pointer; }
+  .fs-apply { flex:2; padding:11px; background:var(--orange); border:none; border-radius:10px; font-family:inherit; font-size:14px; font-weight:800; color:white; cursor:pointer; }
+  .fs-apply:hover { background:var(--orange-dark); }
+
+  /* ── BOTTOM NAV ── */
+  .mob-bottom-nav {
+    display:flex; align-items:center;
+    position:fixed; bottom:0; left:0; right:0; z-index:300;
+    background:white; border-top:1px solid var(--gray-200);
+    height:60px; box-shadow:0 -2px 12px rgba(0,0,0,.08);
+  }
+  .mob-nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; font-size:11px; font-weight:700; color:var(--gray-500); padding:5px 0; }
+  .mob-nav-item.active { color:var(--orange); }
+  .mob-nav-icon { font-size:21px; line-height:1; }
+  .mob-nav-profile-avatar { width:24px; height:24px; background:var(--burgundy); color:#c9a84c; border-radius:6px; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center; }
+
+  ::-webkit-scrollbar { width:4px; height:4px; }
   ::-webkit-scrollbar-thumb { background:var(--gray-300); border-radius:3px; }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-brand">
-    <div class="logo-icon">
-      <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
-        <rect width="42" height="42" rx="8" fill="#7a3a00"/>
-        <rect x="12" y="26" width="18" height="10" fill="#fad96a"/>
-        <rect x="18" y="28" width="6" height="8" rx="1" fill="#7a3a00"/>
-        <polygon points="6,26 21,17 36,26" fill="#fad96a"/>
-        <polygon points="12,19 21,12 30,19" fill="#f0d080"/>
-        <polygon points="18,12 21,6 24,12" fill="#ffffff"/>
-        <rect x="13" y="26" width="2" height="10" fill="#c9a84c"/>
-        <rect x="27" y="26" width="2" height="10" fill="#c9a84c"/>
-      </svg>
+<!-- TOPBAR -->
+<div class="mob-topbar">
+  <div class="mob-topbar-left">
+    <button class="mob-topbar-back">‹</button>
+  </div>
+  <div class="mob-topbar-center">
+    <div class="mob-topbar-title">Ban Tri Sự</div>
+    <div class="mob-topbar-sub">Trưởng Ban: Phan Tuấn Anh · <span style="color:rgba(255,255,255,.9);text-decoration:none;">0123 456 788</span></div>
+  </div>
+  <button class="mob-topbar-filter" onclick="openFilterSheet()">
+    <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+      <circle cx="6" cy="7" r="2" stroke="currentColor" stroke-width="2"/>
+      <line x1="6" y1="3" x2="6" y2="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="6" y1="9" x2="6" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="18" cy="17" r="2" stroke="currentColor" stroke-width="2"/>
+      <line x1="18" y1="3" x2="18" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="18" y1="19" x2="18" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="mob-filter-badge" id="mobFilterBadge">0</span>
+  </button>
+</div>
+
+<!-- FILTER SHEET OVERLAY -->
+<div class="filter-sheet-overlay" id="filterSheetOverlay" onclick="closeFilterSheet()"></div>
+
+<!-- FILTER SHEET -->
+<div class="filter-sheet" id="filterSheet">
+  <div class="fs-handle"></div>
+  <div class="fs-header">
+    <span class="fs-title">Bộ lọc</span>
+    <button class="fs-close" onclick="closeFilterSheet()">✕</button>
+  </div>
+  <div class="fs-body">
+    <div class="fs-search" style="margin-top:8px;">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input type="text" id="mobKeywordInput" placeholder="Tìm tên việc, nội dung...">
     </div>
-    <span class="app-name">Quản Lý Công Việc</span>
-  </div>
-  <div class="topbar-datetime">
-    <span class="dt-duong" id="dtDuong"></span>
-    <span class="dt-am" id="dtAm"></span>
-  </div>
-  <div class="topbar-nav">
-    <div class="topbar-nav-item active">🏠 Trang Chủ</div>
-  </div>
-  <div class="topbar-actions">
-    <button class="tb-action">📢 Thông Báo Toàn Chùa</button>
-    <button class="tb-action">+ Đề Xuất</button>
-    <button class="tb-action primary">+ Thêm Việc</button>
-    <div class="user-block">
-      <div class="avatar">PA</div>
-      <div class="user-info">
-        <span class="user-name">Phan Tuấn Anh</span>
-        <span class="user-role">Ban Tri Sự · Trưởng Ban</span>
+
+    <div class="fs-acc">
+      <button class="fs-acc-header" onclick="toggleAcc(this)">
+        <span class="fs-acc-label">Sắp xếp theo</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="fs-acc-value" id="acc-val-sort">Ngày hạn</span>
+          <span class="fs-acc-arrow">▼</span>
+        </span>
+      </button>
+      <div class="fs-acc-body">
+        <button class="fs-opt active" data-filter="sort" data-val="deadline" onclick="fsOptTap(this)">📅 Ngày hạn (gần nhất)<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="sort" data-val="name" onclick="fsOptTap(this)">🔤 Tên A→Z<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="sort" data-val="status" onclick="fsOptTap(this)">🔴 Độ ưu tiên<span class="fs-opt-check">✓</span></button>
       </div>
     </div>
+
+    <div class="fs-acc">
+      <button class="fs-acc-header" onclick="toggleAcc(this)">
+        <span class="fs-acc-label">Trạng thái</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="fs-acc-value" id="acc-val-status">Tất cả</span>
+          <span class="fs-acc-arrow">▼</span>
+        </span>
+      </button>
+      <div class="fs-acc-body">
+        <button class="fs-opt active" data-filter="status" data-val="all" onclick="fsOptTap(this)">Tất cả<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="status" data-val="urgent" onclick="fsOptTap(this)">🔴 Khẩn Cấp<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="status" data-val="important" onclick="fsOptTap(this)">🟠 Quan Trọng<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="status" data-val="waiting" onclick="fsOptTap(this)">🟡 Xin Chỉ Dạy<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="status" data-val="normal" onclick="fsOptTap(this)">🟢 Bình Thường<span class="fs-opt-check">✓</span></button>
+      </div>
+    </div>
+
+    <div class="fs-acc">
+      <button class="fs-acc-header" onclick="toggleAcc(this)">
+        <span class="fs-acc-label">Tiến độ</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="fs-acc-value" id="acc-val-progress">Đang làm</span>
+          <span class="fs-acc-arrow">▼</span>
+        </span>
+      </button>
+      <div class="fs-acc-body">
+        <button class="fs-opt active" data-filter="progress" data-val="active" onclick="fsOptTap(this)">⚡ Đang làm<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="progress" data-val="done" onclick="fsOptTap(this)">✅ Hoàn thành<span class="fs-opt-check">✓</span></button>
+      </div>
+    </div>
+
+    <div class="fs-acc">
+      <button class="fs-acc-header" onclick="toggleAcc(this)">
+        <span class="fs-acc-label">Thời gian</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="fs-acc-value" id="acc-val-date">Tất cả</span>
+          <span class="fs-acc-arrow">▼</span>
+        </span>
+      </button>
+      <div class="fs-acc-body">
+        <button class="fs-opt active" data-filter="date" data-val="all" onclick="fsOptTap(this)">Tất cả<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="date" data-val="today" onclick="fsOptTap(this)">📅 Hôm nay<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="date" data-val="tomorrow" onclick="fsOptTap(this)">📅 Ngày mai<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="date" data-val="week" onclick="fsOptTap(this)">📅 7 ngày tới<span class="fs-opt-check">✓</span></button>
+      </div>
+    </div>
+
+    <div class="fs-acc">
+      <button class="fs-acc-header" onclick="toggleAcc(this)">
+        <span class="fs-acc-label">Loại công việc</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="fs-acc-value" id="acc-val-loai">Phối hợp</span>
+          <span class="fs-acc-arrow">▼</span>
+        </span>
+      </button>
+      <div class="fs-acc-body">
+        <button class="fs-opt active" data-filter="loai" data-val="phoi-hop" onclick="fsOptTap(this)">🤝 Phối hợp<span class="fs-opt-check">✓</span></button>
+        <button class="fs-opt" data-filter="loai" data-val="giao-di" onclick="fsOptTap(this)">📋 Giao đi<span class="fs-opt-check">✓</span></button>
+      </div>
+    </div>
+
+    <div class="fs-acc" style="border-bottom:none;">
+      <button class="fs-acc-header" onclick="toggleAcc(this)">
+        <span class="fs-acc-label">Các ban</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="fs-acc-value" id="acc-val-ban">Tất cả</span>
+          <span class="fs-acc-arrow">▼</span>
+        </span>
+      </button>
+      <div class="fs-acc-body" id="fsBanAccBody">
+        <button class="fs-opt active" data-filter="ban" data-val="all" onclick="fsOptTap(this)">Tất cả<span class="fs-opt-check">✓</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="fs-footer">
+    <button class="fs-reset" onclick="fsReset()">↺ Đặt lại</button>
+    <button class="fs-apply" onclick="fsApply()">Áp dụng</button>
   </div>
 </div>
 
-<div class="content">
-  <div class="ban-header">
-    <div class="ban-info">
-      <h2>Ban Tri Sự</h2>
-      <div class="meta">Trưởng Ban: <span>Phan Tuấn Anh</span> &nbsp;|&nbsp; <span>0123 456 788</span></div>
-    </div>
-  </div>
+<!-- CONTENT HEADER -->
+<div class="mob-content-hdr">
+  <span class="mob-content-hdr-title" id="contentHdrTitle">Đầu mục công việc</span>
+  <button class="mob-add-btn">+</button>
+</div>
 
-  <div class="filter-bar">
-    <span class="filter-label">Sắp xếp theo:</span>
-    <div class="dd-wrap" id="dd-status">
-      <button class="dd-btn" onclick="toggleDD('dd-status')">
-        <span class="dd-left" id="status-label"><span style="width:9px;height:9px;border-radius:50%;background:#adb5bd;display:inline-block;flex-shrink:0;"></span> Tất cả trạng thái</span>
-        <span class="dd-arrow">▼</span>
-      </button>
-      <div class="dd-menu" id="dd-status-menu">
-        <div class="dd-opt selected" onclick="selectStatus('all',this)"><span style="width:9px;height:9px;border-radius:50%;background:#adb5bd;display:inline-block;"></span> Tất cả</div>
-        <div class="dd-opt" onclick="selectStatus('urgent',this)"><span style="width:9px;height:9px;border-radius:50%;background:#c0392b;display:inline-block;"></span> Khẩn Cấp</div>
-        <div class="dd-opt" onclick="selectStatus('important',this)"><span style="width:9px;height:9px;border-radius:50%;background:#e07b39;display:inline-block;"></span> Quan Trọng</div>
-        <div class="dd-opt" onclick="selectStatus('waiting',this)"><span style="width:9px;height:9px;border-radius:50%;background:#c9a84c;display:inline-block;"></span> Đang Chờ Xin Ý Kiến</div>
-        <div class="dd-opt" onclick="selectStatus('overdue',this)"><span style="width:9px;height:9px;border-radius:50%;background:#8e44ad;display:inline-block;"></span> Quá Hạn</div>
-        <div class="dd-opt" onclick="selectStatus('done',this)"><span style="width:9px;height:9px;border-radius:50%;background:#27ae60;display:inline-block;"></span> Hoàn Thành</div>
-      </div>
-    </div>
-    <div class="filter-sep"></div>
-    <div class="dd-wrap" id="dd-date">
-      <button class="dd-btn" style="min-width:175px;" onclick="toggleDD('dd-date')">
-        <span class="dd-left" id="date-label">📅 Tất cả thời gian</span>
-        <span class="dd-arrow">▼</span>
-      </button>
-      <div class="dd-menu" id="dd-date-menu" style="min-width:260px;">
-        <div class="dd-opt selected" onclick="selectDate('all',this)">Tất cả thời gian</div>
-        <div class="dd-opt" onclick="selectDate('yesterday',this)">Hôm qua</div>
-        <div class="dd-opt" onclick="selectDate('today',this)">Hôm nay</div>
-        <div class="dd-opt" onclick="selectDate('tomorrow',this)">Ngày mai</div>
-        <div class="dd-opt" onclick="selectDate('week',this)">7 ngày tới</div>
-        <hr class="dd-sep">
-        <div class="dd-opt" onclick="selectDate('custom',this)">Tùy chọn khoảng thời gian…</div>
-        <div class="date-range-row" id="date-range-row" style="display:none;">
-          <input type="date" id="dr-from">
-          <span style="font-size:12px;color:#888;">→</span>
-          <input type="date" id="dr-to">
-          <button class="dr-apply" onclick="applyDateRange()">Áp dụng</button>
-        </div>
-      </div>
-    </div>
-    <div class="filter-sep"></div>
-    <div class="dd-wrap" id="dd-ban">
-      <button class="dd-btn" style="min-width:175px;" onclick="toggleDD('dd-ban')">
-        <span class="dd-left" id="ban-label">🤝 Tất cả ban</span>
-        <span class="dd-arrow">▼</span>
-      </button>
-      <div class="dd-menu" id="dd-ban-menu" style="min-width:220px;">
-        <div class="dd-opt selected" onclick="selectBan('all',this)">Tất cả ban</div>
-      </div>
-    </div>
+<!-- SEARCH + TOGGLE -->
+<div class="mob-search-bar">
+  <div class="mob-search-inner">
+    <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <input type="text" id="keywordInput" placeholder="Tên việc, nội dung..." oninput="applyFilters()">
   </div>
-
-  <div class="table-wrap">
-    <table class="task-table">
-      <colgroup><col><col><col></colgroup>
-      <thead>
-        <tr>
-          <th>Đầu Mục Công Việc</th>
-          <th>Ý Kiến Ban Phối Hợp</th>
-          <th class="col-sp">Sư Phụ / BLĐ Chỉ Dạy</th>
-        </tr>
-      </thead>
-      <tbody id="taskBody"></tbody>
-    </table>
+  <div class="status-toggle-wrap" id="statusToggleWrap">
+    <button class="status-toggle-btn active" id="stab-active" onclick="switchStatusTab('active')">⚡</button>
+    <button class="status-toggle-btn" id="stab-done" onclick="switchStatusTab('done')">✅</button>
   </div>
+</div>
 
+<!-- MAIN PANEL -->
+<div id="panel-main">
+  <div class="card-list" id="taskBody"></div>
   <div class="bottom-bar">
     <div class="pg-info" id="pgInfo"></div>
     <div class="pagination" id="pagination"></div>
   </div>
 </div>
 
+<!-- GIAO ĐI PANEL -->
+<div id="panel-giao-di" style="display:none;">
+  <div class="card-list" id="outTaskBody"></div>
+  <div class="bottom-bar">
+    <div class="pg-info" id="pgInfoOut"></div>
+    <div class="pagination" id="paginationOut"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="mob-bottom-nav">
+  <div class="mob-nav-item active"><span class="mob-nav-icon">🏠</span>Trang chủ</div>
+  <div class="mob-nav-item"><span class="mob-nav-icon">🔔</span>Thông báo</div>
+  <div class="mob-nav-item"><div class="mob-nav-profile-avatar">PA</div>Hồ sơ</div>
+</div>
+
 <script>
+/* ===== LUNAR TABLE ===== */
 const LUNAR_TABLE = {
-  '2026-04-18':{day:1,month:3},'2026-04-19':{day:2,month:3},'2026-04-20':{day:3,month:3},
-  '2026-04-21':{day:4,month:3},'2026-04-22':{day:5,month:3},'2026-04-23':{day:6,month:3},
-  '2026-04-24':{day:7,month:3},'2026-04-25':{day:8,month:3},'2026-04-26':{day:9,month:3},
-  '2026-04-27':{day:10,month:3},'2026-04-28':{day:11,month:3},'2026-04-29':{day:12,month:3},
-  '2026-04-30':{day:13,month:3},'2026-05-01':{day:14,month:3},'2026-05-02':{day:15,month:3},
-  '2026-05-03':{day:16,month:3},'2026-05-04':{day:17,month:3},'2026-05-05':{day:18,month:3},
-  '2026-05-06':{day:19,month:3},'2026-05-07':{day:20,month:3},'2026-05-08':{day:21,month:3},
-  '2026-05-09':{day:22,month:3},'2026-05-10':{day:23,month:3},'2026-05-11':{day:24,month:3},
-  '2026-05-12':{day:25,month:3},'2026-05-13':{day:26,month:3},'2026-05-14':{day:27,month:3},
-  '2026-05-15':{day:28,month:3},'2026-05-16':{day:29,month:3},'2026-05-17':{day:1,month:4},
-  '2026-05-18':{day:2,month:4},'2026-05-19':{day:3,month:4},'2026-05-20':{day:4,month:4},
+  '2026-04-18':{d:1,m:3},'2026-04-19':{d:2,m:3},'2026-04-20':{d:3,m:3},
+  '2026-04-21':{d:4,m:3},'2026-04-22':{d:5,m:3},'2026-04-23':{d:6,m:3},
+  '2026-04-24':{d:7,m:3},'2026-04-25':{d:8,m:3},'2026-04-26':{d:9,m:3},
+  '2026-04-27':{d:10,m:3},'2026-04-28':{d:11,m:3},'2026-04-29':{d:12,m:3},
+  '2026-04-30':{d:13,m:3},'2026-05-01':{d:14,m:3},'2026-05-02':{d:15,m:3},
+  '2026-05-03':{d:16,m:3},'2026-05-04':{d:17,m:3},'2026-05-05':{d:18,m:3},
+  '2026-05-06':{d:19,m:3},'2026-05-07':{d:20,m:3},'2026-05-08':{d:21,m:3},
+  '2026-05-09':{d:22,m:3},'2026-05-10':{d:23,m:3},'2026-05-11':{d:24,m:3},
+  '2026-05-12':{d:25,m:3},'2026-05-13':{d:26,m:3},'2026-05-14':{d:27,m:3},
+  '2026-05-15':{d:28,m:3},'2026-05-16':{d:29,m:3},'2026-05-17':{d:1,m:4},
+  '2026-05-18':{d:2,m:4},'2026-05-19':{d:3,m:4},'2026-05-20':{d:4,m:4},
 };
-const THU=['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
 
 function isoKey(d){ return d.toISOString().split('T')[0]; }
-function toAmLich(ddmmyyyy){
+function toAL(ddmmyyyy){
   if(!ddmmyyyy) return '';
-  const p=ddmmyyyy.trim().split('/'); if(p.length<3) return ddmmyyyy;
-  const al=LUNAR_TABLE[`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`];
-  return al?`${al.day}/${al.month}/ÂL`:ddmmyyyy;
+  const p=ddmmyyyy.trim().split('/');
+  if(p.length<3) return ddmmyyyy;
+  const k=`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+  const al=LUNAR_TABLE[k];
+  return al ? `${al.d}/${al.m}/ÂL` : ddmmyyyy;
 }
 function convertTimeRange(s){
   if(!s) return '';
-  const m=s.match(/(\d{2}\/\d{2})\s*[→–-]\s*(\d{2}\/\d{2}\/\d{4})/);
-  if(m){const y=m[2].split('/')[2];return `${toAmLich(m[1]+'/'+y)} – ${toAmLich(m[2])}`;}
-  const s2=s.match(/(\d{2}\/\d{2}\/\d{4})(.*)/);
-  if(s2) return toAmLich(s2[1])+s2[2];
+  const mR=s.match(/(\d{2})\/(\d{2})\s*[→–-]\s*(\d{2})\/(\d{2})\/(\d{4})/);
+  if(mR){ const y=mR[5]; return `${toAL(mR[1]+'/'+mR[2]+'/'+y)} – ${toAL(mR[3]+'/'+mR[4]+'/'+y)}`; }
+  const mS=s.match(/(\d{2})\/(\d{2})\/(\d{4})(.*)/);
+  if(mS) return toAL(mS[1]+'/'+mS[2]+'/'+mS[3])+mS[4];
   return s;
 }
-function convertOpDate(ds){
-  if(!ds) return '';
-  const m=ds.match(/(\d{2}\/\d{2})\s*·\s*(.*)/);
-  return m?`${toAmLich(m[1]+'/2026')} · ${m[2]}`:ds;
+function parseOpDate(ds){
+  if(!ds) return {time:'',date:''};
+  const m=ds.match(/(\d{2})\/(\d{2})\s*·\s*(\d{2}:\d{2})/);
+  if(m) return {time:m[3], date:toAL(m[1]+'/'+m[2]+'/2026')};
+  const m2=ds.match(/(\d{2})\/(\d{2})\s*·\s*(.*)/);
+  if(m2) return {time:'', date:toAL(m2[1]+'/'+m2[2]+'/2026')+' · '+m2[3]};
+  return {time:'', date:ds};
 }
-function truncate(str,len){
-  if(!str||str.length<=len) return str||'';
-  const cut=str.slice(0,len);
-  const ls=cut.lastIndexOf(' ');
-  return (ls>len*0.7?cut.slice(0,ls):cut)+'…';
+function opTimeLabel(ds){
+  const p=parseOpDate(ds);
+  if(p.time) return `${p.time} · ${p.date}`;
+  return p.date;
+}
+function truncateWords(str,maxWords){
+  if(!str) return '';
+  const words=str.trim().split(/\s+/);
+  if(words.length<=maxWords) return str;
+  return words.slice(0,maxWords).join(' ')+'…';
 }
 
 /* ===== DATE HELPERS ===== */
 const TODAY=new Date(); TODAY.setHours(0,0,0,0);
-
-/* Parse "DD/MM/YYYY" or "DD/MM/YYYY · HH:MM" → Date midnight */
 function parseDMY(str){
   if(!str) return null;
   const m=str.match(/(\d{2})\/(\d{2})\/(\d{4})/);
@@ -289,378 +570,493 @@ function parseDMY(str){
   const d=new Date(+m[3],+m[2]-1,+m[1]); d.setHours(0,0,0,0);
   return isNaN(d)?null:d;
 }
-
-/* Parse task time range → {start, end} both as midnight Dates.
-   Handles:
-   "DD/MM → DD/MM/YYYY"          e.g. "08/05 → 14/05/2026"
-   "DD/MM/YYYY · HH:MM – HH:MM"  e.g. "13/05/2026 · 14:00 – 17:00"  (single day)
-   "DD/MM/YYYY"                   single day
-   Falls back to deadline string if time is empty.
-*/
 function parseRange(task){
   const s=task.time||'';
-  // range: 08/05 → 14/05/2026
   const mR=s.match(/(\d{2})\/(\d{2})\s*[→–-]\s*(\d{2})\/(\d{2})\/(\d{4})/);
-  if(mR){
-    const yr=+mR[5];
-    const st=new Date(yr,+mR[2]-1,+mR[1]); st.setHours(0,0,0,0);
-    const en=new Date(yr,+mR[4]-1,+mR[3]); en.setHours(0,0,0,0);
-    return {start:st,end:en};
-  }
-  // single date in time string
+  if(mR){const yr=+mR[5];const st=new Date(yr,+mR[2]-1,+mR[1]);st.setHours(0,0,0,0);const en=new Date(yr,+mR[4]-1,+mR[3]);en.setHours(0,0,0,0);return{start:st,end:en};}
   const mS=s.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if(mS){
-    const d=new Date(+mS[3],+mS[2]-1,+mS[1]); d.setHours(0,0,0,0);
-    return {start:d,end:d};
-  }
-  // fallback to deadline
+  if(mS){const d=new Date(+mS[3],+mS[2]-1,+mS[1]);d.setHours(0,0,0,0);return{start:d,end:d};}
   const dl=parseDMY(task.deadline);
-  if(dl) return {start:dl,end:dl};
+  if(dl) return{start:dl,end:dl};
   return null;
 }
-
-function relDate(n){ const d=new Date(TODAY); d.setDate(TODAY.getDate()+n); return d; }
-function sameDay(a,b){ return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
-
-/* Does task's range cover a specific day? */
-function coversDay(task,day){
-  const r=parseRange(task); if(!r) return false;
-  return day>=r.start && day<=r.end;
-}
-/* Does task's range overlap [from, to]? */
-function overlaps(task,from,to){
-  const r=parseRange(task); if(!r) return false;
-  return r.start<=to && r.end>=from;
-}
-
-/* ===== OVERDUE: end date strictly before today, not done ===== */
+function relDate(n){const d=new Date(TODAY);d.setDate(TODAY.getDate()+n);return d;}
+function coversDay(task,day){const r=parseRange(task);if(!r)return false;return day>=r.start&&day<=r.end;}
+function overlaps(task,from,to){const r=parseRange(task);if(!r)return false;return r.start<=to&&r.end>=from;}
 function isTrulyOverdue(task){
-  if(task.tags.includes('done')) return false;
-  const r=parseRange(task); if(!r) return false;
-  return r.end < TODAY;
+  if(task.tags&&task.tags.includes('done'))return false;
+  const r=parseRange(task);if(!r)return false;return r.end<TODAY;
 }
-
 function getStatusTag(task){
-  if(task.tags.includes('done'))     return 'done';
-  if(isTrulyOverdue(task))           return 'overdue';
-  if(task.tags.includes('urgent'))   return 'urgent';
-  if(task.tags.includes('waiting'))  return 'waiting';
-  if(task.tags.includes('important'))return 'important';
+  if(task.tags&&task.tags.includes('done'))      return 'done';
+  if(isTrulyOverdue(task))                       return 'normal';
+  if(task.tags&&task.tags.includes('urgent'))    return 'urgent';
+  if(task.tags&&task.tags.includes('waiting'))   return 'waiting';
+  if(task.tags&&task.tags.includes('important')) return 'important';
   return 'normal';
 }
-function getDotClass(task){
-  const map={urgent:'dot-urgent',important:'dot-important',waiting:'dot-waiting',overdue:'dot-overdue',done:'dot-done',normal:''};
-  return map[getStatusTag(task)]||'';
+function getDotClass(t){
+  return{urgent:'dot-urgent',important:'dot-important',waiting:'dot-waiting',done:'dot-done',normal:'dot-normal'}[getStatusTag(t)]||'dot-normal';
+}
+function getDotColor(st){
+  return{urgent:'#c0392b',important:'#e07b39',waiting:'#c9a84c',done:'#27ae60',normal:'#2d6a4f'}[st]||'#2d6a4f';
 }
 
-/* ===== DATA ===== */
+/* ===== LIKE DATA ===== */
+const sampleLikers = {
+  'op1_1':['Ban Tài Chính','Ban Hậu Cần','Ban Tri Sự'],
+  'op2_1':['Ban Hướng Dẫn','Ban An Ninh','Ban Nghi Lễ','Ban Trang Trí','Ban Tri Sự'],
+  'op3_1':['Ban Tri Sự','Ban Hướng Dẫn','Ban Nghi Lễ','Ban Ẩm Thực','Ban Hậu Cần','Ban Trang Trí'],
+  'op4_1':[],'op5_1':['Ban Tri Sự','Ban Vật Tư'],
+  'op6_1':['Ban Tri Sự','Ban Nghi Lễ','Ban Vật Tư'],
+  'op7_1':['Ban Truyền Thông','Ban Tri Sự'],'op7_2':['Ban Kỹ Thuật'],
+  'op8_1':['Ban Tri Sự','Ban Nghi Lễ','Ban Vật Tư','Ban Ẩm Thực'],
+  'op9_1':['Ban Tri Sự','Ban An Ninh','Ban Hướng Dẫn','Ban Hậu Cần'],
+  'op10_1':['Ban Hậu Cần'],'op10_2':['Ban Ẩm Thực','Ban Tri Sự'],
+  'op11_1':['Ban Truyền Thông','Ban Tri Sự'],
+  'op12_1':['Ban Tri Sự','Ban Tăng Chúng','Ban Vật Tư','Ban Hướng Dẫn','Ban An Ninh','Ban Nghi Lễ','Ban Trang Trí'],
+  'op13_1':[],'op14_1':['Ban Tri Sự'],'op15_1':[],
+  'op16_1':['Ban Tri Sự','Ban Hướng Dẫn','Ban An Ninh','Ban Nghi Lễ','Ban Hậu Cần'],
+  'op17_1':['Ban Tri Sự','Ban Hướng Dẫn','Ban Tăng Chúng'],
+};
+
+/* ===== TASK DATA ===== */
 const tasks=[
-  /* URGENT */
-  {id:1,name:'Dự Toán & Cung Ứng Vật Tư Phật Đản',
-   detail:'Lập danh mục và mua sắm toàn bộ vật tư: nến bơ thuần chay, nhang trầm, hoa tươi, dầu đèn, vải vàng, phướn, đèn lồng cho Đại Lễ Phật Đản 2026.',
-   time:'05/05 → 06/05/2026',deadline:'06/05/2026 · 17:00',tags:['urgent'],
-   bans:['Ban Vật Tư','Ban Tài Chính'],
-   phoi_hop:[{text:'Đã lập danh mục 28 mặt hàng, tổng dự toán ~15.200.000đ. Đề nghị Ban Tài Chính giải ngân tạm ứng 70% để đặt hàng sớm, tránh thiếu hàng dịp lễ.',author:'Ban Vật Tư',date:'04/05 · 07:30'}],
-   sp_bld:[{text:'BLĐ duyệt danh mục. Nhang phải đặt loại nhang trầm, tuyệt đối không dùng nhang hóa học. Nến bơ phải loại thuần chay. Vật tư về chùa trước 25/3/ÂL.',author:'BLĐ',date:'04/05 · 09:30',type:'bld'}]},
-  {id:2,name:'Phân Công Nhân Sự Đại Lễ Phật Đản',
-   detail:'Lập danh sách phân công cụ thể từng ban, từng vị trí trong toàn bộ chương trình. Đảm bảo đủ nhân sự đón tiếp phật tử từ sáng sớm 28/3/ÂL.',
-   time:'05/05 → 09/05/2026',deadline:'09/05/2026',tags:['urgent'],
-   bans:['Ban Tri Sự','Ban Hướng Dẫn','Ban An Ninh'],
-   phoi_hop:[{text:'Đã lập dự thảo phân công 68 nhân sự cho 6 ban. Đề nghị tất cả ban trưởng xác nhận danh sách trước 21/3/ÂL để kịp in và phổ biến.',author:'Ban Tri Sự',date:'04/05 · 08:00'}],
-   sp_bld:[{text:'Phân công rõ ràng là điều rất quan trọng. Mỗi người phải biết rõ nhiệm vụ — đúng giờ, đúng vị trí, đúng tâm. Không để phật tử chờ đợi tại cổng.',author:'BLĐ',date:'04/05 · 12:00',type:'bld'}]},
-  {id:5,name:'Trang Trí Lễ Đài Phật Đản',
-   detail:'Trang trí chánh điện, lễ đài và cổng tam quan với hoa sen, đèn lồng, phướn; bố trí khung cảnh trang nghiêm phục vụ Đại Lễ Phật Đản.',
-   time:'08/05 → 14/05/2026',deadline:'14/05/2026',tags:['urgent'],
-   bans:['Ban Trang Trí','Ban Vật Tư'],
-   phoi_hop:[{text:'Đã lên phương án hoa sen 3 tầng tại lễ đài chính. Cần thêm 200 đèn lồng và 50 phướn lớn. Xin phê duyệt kinh phí bổ sung.',author:'Ban Trang Trí',date:'04/05 · 08:30'}],
-   sp_bld:[{text:'Lễ đài phải trang nghiêm, thanh tịnh. Hoa sen là biểu trưng của Đức Phật — cần bày trí đúng vị trí, không quá rườm rà. Phướn treo phải thẳng, không lệch.',author:'Sư Phụ',date:'04/05 · 10:00',type:'sp'}]},
-  {id:8,name:'Lễ Mộc Dục & Rước Phật',
-   detail:'Chuẩn bị đầy đủ dụng cụ lễ Mộc Dục: chậu hoa, nước thơm, khăn sạch. Phân công đội hình rước Phật theo nghi thức truyền thống sáng 28/3/ÂL.',
-   time:'14/05 → 15/05/2026',deadline:'15/05/2026',tags:['urgent'],
-   bans:['Ban Nghi Lễ','Ban Tri Sự'],
-   phoi_hop:[{text:'Đã chuẩn bị đủ dụng cụ lễ Mộc Dục cho 3 tượng Phật chính. Đội hình rước Phật gồm 24 người, đã tập dượt 1 lần. Đề nghị sắp xếp thêm 6 người cầm lọng.',author:'Ban Nghi Lễ',date:'05/05 · 08:00'}],
+  {id:1,name:'Dự Toán & Cung Ứng Vật Tư Phật Đản',detail:'Lập danh mục và mua sắm toàn bộ vật tư: nến bơ thuần chay, nhang trầm, hoa tươi, dầu đèn, vải vàng, phướn, đèn lồng cho Đại Lễ Phật Đản 2026.',time:'05/05 → 06/05/2026',tags:['waiting'],bans:['Ban Vật Tư','Ban Tài Chính'],
+   phoi_hop:[{id:'op1_1',text:'Đã lập danh mục 28 mặt hàng, tổng dự toán ~15.200.000đ. Đề nghị Ban Tài Chính giải ngân tạm ứng 70% để đặt hàng sớm, tránh thiếu hàng dịp lễ.',author:'Ban Vật Tư',date:'04/05 · 07:30',likes:3,liked:false,edited:false}],sp_bld:[]},
+  {id:2,name:'Phân Công Nhân Sự Đại Lễ Phật Đản',detail:'Lập danh sách phân công cụ thể từng ban, từng vị trí trong toàn bộ chương trình. Đảm bảo đủ nhân sự đón tiếp phật tử từ sáng sớm 28/3/ÂL.',time:'05/05 → 09/05/2026',tags:['urgent'],bans:['Ban Tri Sự','Ban Hướng Dẫn','Ban An Ninh'],
+   phoi_hop:[{id:'op2_1',text:'Đã lập dự thảo phân công 68 nhân sự cho 6 ban. Đề nghị tất cả ban trưởng xác nhận danh sách trước 21/3/ÂL để kịp in và phổ biến.',author:'Ban Tri Sự',date:'04/05 · 08:00',likes:5,liked:false,edited:false}],
+   sp_bld:[{text:'Phân công rõ ràng là điều rất quan trọng. Mỗi người phải biết rõ nhiệm vụ — đúng giờ, đúng vị trí, đúng tâm.',author:'BLĐ',date:'04/05 · 12:00',type:'bld'}]},
+  {id:5,name:'Trang Trí Lễ Đài Phật Đản',detail:'Trang trí chánh điện, lễ đài và cổng tam quan với hoa sen, đèn lồng, phướn; bố trí khung cảnh trang nghiêm phục vụ Đại Lễ Phật Đản.',time:'08/05 → 14/05/2026',tags:['urgent'],bans:['Ban Trang Trí','Ban Vật Tư'],
+   phoi_hop:[{id:'op5_1',text:'Đã lên phương án hoa sen 3 tầng tại lễ đài chính. Cần thêm 200 đèn lồng và 50 phướn lớn. Xin phê duyệt kinh phí bổ sung.',author:'Ban Trang Trí',date:'04/05 · 08:30',likes:2,liked:false,edited:false}],
+   sp_bld:[{text:'Lễ đài phải trang nghiêm, thanh tịnh. Hoa sen là biểu trưng của Đức Phật — cần bày trí đúng vị trí, không quá rườm rà.',author:'Sư Phụ',date:'04/05 · 10:00',type:'sp'}]},
+  {id:8,name:'Lễ Mộc Dục & Rước Phật',detail:'Chuẩn bị đầy đủ dụng cụ lễ Mộc Dục: chậu hoa, nước thơm, khăn sạch. Phân công đội hình rước Phật theo nghi thức truyền thống sáng 28/3/ÂL.',time:'14/05 → 15/05/2026',tags:['urgent'],bans:['Ban Nghi Lễ','Ban Tri Sự'],
+   phoi_hop:[{id:'op8_1',text:'Đã chuẩn bị đủ dụng cụ lễ Mộc Dục cho 3 tượng Phật chính. Đội hình rước Phật gồm 24 người, đã tập dượt 1 lần.',author:'Ban Nghi Lễ',date:'05/05 · 08:00',likes:4,liked:false,edited:false}],
    sp_bld:[{text:'Lễ Mộc Dục là nghi thức quan trọng, cần thực hiện trang nghiêm, đúng pháp. Đội hình rước Phật phải mặc áo tràng, đi đều bước, giữ im lặng hoàn toàn.',author:'Sư Phụ',date:'05/05 · 09:00',type:'sp'}]},
-  {id:10,name:'Chuẩn Bị Ẩm Thực Chay Ngày Lễ',
-   detail:'Lên thực đơn và chuẩn bị bữa cơm chay thết đãi toàn bộ phật tử tham dự. Dự kiến phục vụ 800–1000 suất. Đảm bảo vệ sinh an toàn thực phẩm tuyệt đối.',
-   time:'12/05 → 15/05/2026',deadline:'15/05/2026',tags:['urgent'],
-   bans:['Ban Ẩm Thực','Ban Hậu Cần'],
-   phoi_hop:[
-     {text:'Đã lên thực đơn 8 món chay. Cần đặt thêm gạo 200kg, đậu hũ 50kg và rau các loại. Dự kiến cần 30 tình nguyện viên nấu bếp từ 3:00 sáng.',author:'Ban Ẩm Thực',date:'05/05 · 07:30'},
-     {text:'Đã chuẩn bị 1200 bộ khay, tô, muỗng. Sắp xếp khu vực phục vụ ở sân sau đủ chỗ cho 400 người ngồi cùng lúc.',author:'Ban Hậu Cần',date:'05/05 · 08:30'}
-   ],
-   sp_bld:[{text:'Cơm chay ngày lễ là phước duyên. Nấu với tâm thành, không để thiếu người. Tất cả thực phẩm phải thuần chay — kiểm tra kỹ từng nguyên liệu đầu vào.',author:'Sư Phụ',date:'05/05 · 12:00',type:'sp'}]},
-
-  /* IMPORTANT */
-  {id:3,name:'Truyền Thông & Livestream Phật Đản',
-   detail:'Thiết kế banner, poster, đăng thông báo mạng xã hội; chuẩn bị và vận hành hệ thống livestream toàn bộ chương trình Đại Lễ Phật Đản.',
-   time:'05/05 → 10/05/2026',deadline:'10/05/2026',tags:['important'],
-   bans:['Ban Truyền Thông'],
-   phoi_hop:[{text:'Đã thiết kế xong 3 mẫu banner chính. Kênh YouTube và Facebook đã đăng thông báo lịch lễ. Đang thử nghiệm livestream tại chánh điện, âm thanh ổn định.',author:'Ban Truyền Thông',date:'04/05 · 10:00'}],
-   sp_bld:[{text:'Nội dung đăng tải cần giữ văn phong trang trọng, đúng Chánh Pháp. Livestream phải đảm bảo âm thanh rõ ràng để Phật tử ở xa cũng nghe được.',author:'Sư Phụ',date:'04/05 · 11:00',type:'sp'}]},
-  {id:4,name:'Họp Kiểm Tra Tiến Độ Lần Cuối',
-   detail:'Họp toàn bộ các ban vào chiều 26/3/ÂL để rà soát tiến độ lần cuối, xử lý phát sinh và xác nhận mọi công tác đã sẵn sàng trước giờ khai lễ.',
-   time:'13/05/2026 · 14:00 – 17:00',deadline:'13/05/2026',tags:['important'],
-   bans:['Ban Tri Sự','Ban Văn Phòng'],
-   phoi_hop:[{text:'Đề xuất họp tại Hội Trường lớn, mời đầy đủ trưởng các ban. Cần chuẩn bị bảng kiểm tra tiến độ chi tiết theo từng hạng mục.',author:'Ban Tri Sự',date:'04/05 · 13:00'}],
-   sp_bld:[]},
-  {id:6,name:'Chuẩn Bị Hương Đăng & Lễ Vật',
-   detail:'Sắp xếp hương, đèn, nến tại chánh điện và các ban thờ. Phân công trực hương đăng xuyên đêm 27/3 và toàn ngày 28/3/ÂL.',
-   time:'14/05 → 15/05/2026',deadline:'14/05/2026',tags:['important'],
-   bans:['Ban Hương Đăng','Ban Lễ Vật'],
-   phoi_hop:[{text:'Đã phân công 12 người trực hương đăng suốt đêm 27/3 và toàn ngày 28/3/ÂL. Đề nghị bổ sung thêm đèn dầu cỡ lớn cho sân ngoài và lối đi.',author:'Ban Hương Đăng',date:'04/05 · 09:00'}],
-   sp_bld:[{text:'Hương đăng là việc thiêng liêng, cần người có tâm thành kính. Giữ y phục chỉnh tề, tâm thanh tịnh, không nói chuyện ồn ào khi ở gần ban thờ.',author:'Sư Phụ',date:'04/05 · 11:30',type:'sp'}]},
-  {id:7,name:'Kiểm Tra Hệ Thống Âm Thanh Ánh Sáng',
-   detail:'Kiểm tra và hiệu chỉnh toàn bộ hệ thống loa, micro, đèn chiếu sáng tại chánh điện và khu vực ngoài trời.',
-   time:'10/05 → 12/05/2026',deadline:'12/05/2026',tags:['important'],
-   bans:['Ban Kỹ Thuật','Ban Truyền Thông'],
-   phoi_hop:[
-     {text:'Đã kiểm tra hệ thống loa chính, cần thay thế 2 micro không dây bị suy giảm tín hiệu. Dự kiến hoàn thành hiệu chỉnh trước 24/3/ÂL.',author:'Ban Kỹ Thuật',date:'05/05 · 09:00'},
-     {text:'Phối hợp cài đặt thiết bị livestream song song với hệ thống âm thanh, đảm bảo không gây nhiễu.',author:'Ban Truyền Thông',date:'05/05 · 10:30'}
-   ],
-   sp_bld:[{text:'Âm thanh là yếu tố quan trọng giúp đại chúng tập trung. Cần thử âm toàn bộ trước ít nhất 1 ngày, không để sự cố xảy ra trong buổi lễ.',author:'BLĐ',date:'05/05 · 14:00',type:'bld'}]},
-  {id:9,name:'Tiếp Đón & Hướng Dẫn Phật Tử',
-   detail:'Bố trí đội tiếp đón tại cổng tam quan từ 5:00 sáng ngày lễ. Chuẩn bị bảng hướng dẫn, sơ đồ khuôn viên, phân luồng giao thông xe máy và ô tô.',
-   time:'14/05 → 15/05/2026',deadline:'15/05/2026',tags:['important'],
-   bans:['Ban Hướng Dẫn','Ban An Ninh'],
-   phoi_hop:[{text:'Đã bố trí 20 người tiếp đón chia 3 ca. In 500 tờ sơ đồ hướng dẫn. Phối hợp với Ban An Ninh phân luồng xe từ 200m trước cổng chùa.',author:'Ban Hướng Dẫn',date:'05/05 · 10:00'}],
-   sp_bld:[{text:'Đón tiếp phật tử với tâm từ bi, nụ cười thân thiện. Đây là ấn tượng đầu tiên của đại chúng với ngày lễ — cần chu đáo, tận tâm.',author:'BLĐ',date:'05/05 · 11:00',type:'bld'}]},
-
-  /* WAITING — đang chờ xin ý kiến */
-  {id:13,name:'Xin Ý Kiến Về Chương Trình Văn Nghệ Phật Đản',
-   detail:'Ban Truyền Thông đề xuất tổ chức tiết mục văn nghệ Phật giáo (nhạc đạo, múa sen) sau lễ chính. Cần xin ý kiến BLĐ về hình thức, thời lượng và danh sách tiết mục trước khi thông báo.',
-   time:'06/05 → 08/05/2026',deadline:'08/05/2026',tags:['waiting'],
-   bans:['Ban Truyền Thông','Ban Tri Sự'],
-   phoi_hop:[{text:'Đã soạn dự thảo chương trình 5 tiết mục nhạc đạo và 2 màn múa sen. Tổng thời lượng ~45 phút. Đề nghị BLĐ xem xét và cho ý kiến sớm để kịp tập luyện.',author:'Ban Truyền Thông',date:'05/05 · 14:00'}],
-   sp_bld:[]},
-  {id:14,name:'Xin Phép Sử Dụng Bãi Đỗ Xe Ngoài Khuôn Viên',
-   detail:'Dự kiến lượng phật tử đông, cần mượn bãi đất trống phía tây chùa làm bãi đỗ xe tạm thời ngày lễ. Cần xin ý kiến BLĐ và liên hệ chính quyền địa phương.',
-   time:'06/05 → 07/05/2026',deadline:'07/05/2026',tags:['waiting'],
-   bans:['Ban An Ninh','Ban Tri Sự'],
-   phoi_hop:[{text:'Ban An Ninh đã khảo sát, bãi đất có thể chứa ~150 xe máy và 20 ô tô. Cần công văn xin phép UBND phường trước 5 ngày. Đề nghị BLĐ phê duyệt để tiến hành.',author:'Ban An Ninh',date:'05/05 · 09:30'}],
-   sp_bld:[]},
-
-  /* OVERDUE — deadline đã qua hôm nay (06/05/2026), chưa hoàn thành */
-  {id:11,name:'Phát Hành Tập San Phật Đản 2026',
-   detail:'Biên soạn và in ấn tập san kỷ niệm Đại Lễ Phật Đản 2026. Nội dung gồm: lời đạo từ, bài pháp, ảnh tư liệu, thông điệp từ các ban. Số lượng 1.000 bản.',
-   time:'01/05 → 05/05/2026',deadline:'05/05/2026',tags:[],
-   bans:['Ban Văn Phòng','Ban Truyền Thông'],
-   phoi_hop:[{text:'Đã hoàn thiện bản thảo, đang chờ lời đạo từ của Sư Phụ. Nhà in xác nhận cần 5 ngày sản xuất. Đề nghị duyệt bản thảo gấp.',author:'Ban Văn Phòng',date:'04/05 · 14:00'}],
-   sp_bld:[{text:'Lời đạo từ sẽ gửi trước 22/3/ÂL. Tập san phải trang trọng, nội dung thuần Phật pháp — không đưa nội dung thế tục vào. Ban Văn Phòng kiểm tra lỗi chính tả.',author:'Sư Phụ',date:'05/05 · 08:00',type:'sp'}]},
-  {id:15,name:'Duyệt Ngân Sách Đại Lễ Tháng 3 ÂL',
-   detail:'Tổng hợp và trình BLĐ duyệt toàn bộ ngân sách chi tiêu cho Đại Lễ Phật Đản. Đã quá hạn trình, cần xử lý gấp để các ban có thể quyết toán.',
-   time:'28/04 → 02/05/2026',deadline:'02/05/2026',tags:[],
-   bans:['Ban Tài Chính','Ban Tri Sự'],
-   phoi_hop:[{text:'Đã tổng hợp 12 hạng mục chi, tổng dự toán 87.500.000đ. Bảng tổng hợp đã gửi qua email BLĐ ngày 01/05. Chờ phê duyệt để giải ngân.',author:'Ban Tài Chính',date:'01/05 · 16:00'}],
+  {id:10,name:'Chuẩn Bị Ẩm Thực Chay Ngày Lễ',detail:'Lên thực đơn và chuẩn bị bữa cơm chay thết đãi toàn bộ phật tử tham dự. Dự kiến phục vụ 800–1000 suất.',time:'12/05 → 15/05/2026',tags:['urgent'],bans:['Ban Ẩm Thực','Ban Hậu Cần'],
+   phoi_hop:[{id:'op10_1',text:'Đã lên thực đơn 8 món chay. Cần đặt thêm gạo 200kg, đậu hũ 50kg và rau các loại.',author:'Ban Ẩm Thực',date:'05/05 · 07:30',likes:1,liked:false,edited:false},{id:'op10_2',text:'Đã chuẩn bị 1200 bộ khay, tô, muỗng. Sắp xếp khu vực phục vụ ở sân sau đủ chỗ cho 400 người ngồi cùng lúc.',author:'Ban Hậu Cần',date:'05/05 · 08:30',likes:2,liked:false,edited:false}],
+   sp_bld:[{text:'Cơm chay ngày lễ là phước duyên. Nấu với tâm thành, không để thiếu người.',author:'Sư Phụ',date:'05/05 · 12:00',type:'sp'}]},
+  {id:3,name:'Truyền Thông & Livestream Phật Đản',detail:'Thiết kế banner, poster, đăng thông báo mạng xã hội; chuẩn bị và vận hành hệ thống livestream toàn bộ chương trình Đại Lễ Phật Đản.',time:'05/05 → 10/05/2026',tags:['important'],bans:['Ban Truyền Thông'],
+   phoi_hop:[{id:'op3_1',text:'Đã thiết kế xong 3 mẫu banner chính. Kênh YouTube và Facebook đã đăng thông báo lịch lễ.',author:'Ban Truyền Thông',date:'04/05 · 10:00',likes:6,liked:false,edited:false}],
+   sp_bld:[{text:'Nội dung đăng tải cần giữ văn phong trang trọng, đúng Chánh Pháp. Livestream phải đảm bảo âm thanh rõ ràng.',author:'Sư Phụ',date:'04/05 · 11:00',type:'sp'}]},
+  {id:4,name:'Họp Kiểm Tra Tiến Độ Lần Cuối',detail:'Họp toàn bộ các ban vào chiều 26/3/ÂL để rà soát tiến độ lần cuối, xử lý phát sinh và xác nhận mọi công tác đã sẵn sàng trước giờ khai lễ.',time:'13/05/2026 · 14:00 – 17:00',tags:['important'],bans:['Ban Tri Sự','Ban Văn Phòng'],
+   phoi_hop:[{id:'op4_1',text:'Đề xuất họp tại Hội Trường lớn, mời đầy đủ trưởng các ban. Cần chuẩn bị bảng kiểm tra tiến độ chi tiết theo từng hạng mục.',author:'Ban Tri Sự',date:'04/05 · 13:00',likes:0,liked:false,edited:false}],sp_bld:[]},
+  {id:6,name:'Chuẩn Bị Hương Đăng & Lễ Vật',detail:'Sắp xếp hương, đèn, nến tại chánh điện và các ban thờ. Phân công trực hương đăng xuyên đêm 27/3 và toàn ngày 28/3/ÂL.',time:'14/05 → 15/05/2026',tags:['important'],bans:['Ban Hương Đăng','Ban Lễ Vật'],
+   phoi_hop:[{id:'op6_1',text:'Đã phân công 12 người trực hương đăng suốt đêm 27/3 và toàn ngày 28/3/ÂL.',author:'Ban Hương Đăng',date:'04/05 · 09:00',likes:3,liked:false,edited:false}],
+   sp_bld:[{text:'Hương đăng là việc thiêng liêng, cần người có tâm thành kính.',author:'Sư Phụ',date:'04/05 · 11:30',type:'sp'}]},
+  {id:7,name:'Kiểm Tra Hệ Thống Âm Thanh Ánh Sáng',detail:'Kiểm tra và hiệu chỉnh toàn bộ hệ thống loa, micro, đèn chiếu sáng tại chánh điện và khu vực ngoài trời.',time:'10/05 → 12/05/2026',tags:['important'],bans:['Ban Kỹ Thuật','Ban Truyền Thông'],
+   phoi_hop:[{id:'op7_1',text:'Đã kiểm tra hệ thống loa chính, cần thay thế 2 micro không dây bị suy giảm tín hiệu.',author:'Ban Kỹ Thuật',date:'05/05 · 09:00',likes:2,liked:false,edited:false},{id:'op7_2',text:'Phối hợp cài đặt thiết bị livestream song song với hệ thống âm thanh.',author:'Ban Truyền Thông',date:'05/05 · 10:30',likes:1,liked:false,edited:false}],
+   sp_bld:[{text:'Âm thanh là yếu tố quan trọng giúp đại chúng tập trung. Cần thử âm toàn bộ trước ít nhất 1 ngày.',author:'BLĐ',date:'05/05 · 14:00',type:'bld'}]},
+  {id:9,name:'Tiếp Đón & Hướng Dẫn Phật Tử',detail:'Bố trí đội tiếp đón tại cổng tam quan từ 5:00 sáng ngày lễ. Chuẩn bị bảng hướng dẫn, sơ đồ khuôn viên, phân luồng giao thông.',time:'14/05 → 15/05/2026',tags:['important'],bans:['Ban Hướng Dẫn','Ban An Ninh'],
+   phoi_hop:[{id:'op9_1',text:'Đã bố trí 20 người tiếp đón chia 3 ca. In 500 tờ sơ đồ hướng dẫn.',author:'Ban Hướng Dẫn',date:'05/05 · 10:00',likes:4,liked:false,edited:false}],
+   sp_bld:[{text:'Đón tiếp phật tử với tâm từ bi, nụ cười thân thiện.',author:'BLĐ',date:'05/05 · 11:00',type:'bld'}]},
+  {id:13,name:'Xin Ý Kiến Về Chương Trình Văn Nghệ Phật Đản',detail:'Ban Truyền Thông đề xuất tổ chức tiết mục văn nghệ Phật giáo (nhạc đạo, múa sen) sau lễ chính. Cần xin ý kiến BLĐ về hình thức, thời lượng và danh sách tiết mục.',time:'06/05 → 08/05/2026',tags:['waiting'],bans:['Ban Truyền Thông','Ban Tri Sự'],
+   phoi_hop:[{id:'op13_1',text:'Đã soạn dự thảo chương trình 5 tiết mục nhạc đạo và 2 màn múa sen. Tổng thời lượng ~45 phút.',author:'Ban Truyền Thông',date:'05/05 · 14:00',likes:0,liked:false,edited:false}],sp_bld:[]},
+  {id:14,name:'Xin Phép Sử Dụng Bãi Đỗ Xe Ngoài Khuôn Viên',detail:'Dự kiến lượng phật tử đông, cần mượn bãi đất trống phía tây chùa làm bãi đỗ xe tạm thời ngày lễ.',time:'06/05 → 07/05/2026',tags:['waiting'],bans:['Ban An Ninh','Ban Tri Sự'],
+   phoi_hop:[{id:'op14_1',text:'Ban An Ninh đã khảo sát, bãi đất có thể chứa ~150 xe máy và 20 ô tô. Cần công văn xin phép UBND phường.',author:'Ban An Ninh',date:'05/05 · 09:30',likes:1,liked:false,edited:false}],sp_bld:[]},
+  {id:11,name:'Phát Hành Tập San Phật Đản 2026',detail:'Biên soạn và in ấn tập san kỷ niệm Đại Lễ Phật Đản 2026. Số lượng 1.000 bản.',time:'01/05 → 05/05/2026',tags:[],bans:['Ban Văn Phòng','Ban Truyền Thông'],
+   phoi_hop:[{id:'op11_1',text:'Đã hoàn thiện bản thảo, đang chờ lời đạo từ của Sư Phụ.',author:'Ban Văn Phòng',date:'04/05 · 14:00',likes:2,liked:false,edited:false}],
+   sp_bld:[{text:'Lời đạo từ sẽ gửi trước 22/3/ÂL. Tập san phải trang trọng, nội dung thuần Phật pháp.',author:'Sư Phụ',date:'05/05 · 08:00',type:'sp'}]},
+  {id:15,name:'Duyệt Ngân Sách Đại Lễ Tháng 3 ÂL',detail:'Tổng hợp và trình BLĐ duyệt toàn bộ ngân sách chi tiêu cho Đại Lễ Phật Đản. Đã quá hạn trình, cần xử lý gấp.',time:'28/04 → 02/05/2026',tags:[],bans:['Ban Tài Chính','Ban Tri Sự'],
+   phoi_hop:[{id:'op15_1',text:'Đã tổng hợp 12 hạng mục chi, tổng dự toán 87.500.000đ.',author:'Ban Tài Chính',date:'01/05 · 16:00',likes:0,liked:false,edited:false}],
    sp_bld:[{text:'Yêu cầu Ban Tài Chính bổ sung mục dự phòng 5% và nộp lại bản chính ký tay trước khi duyệt.',author:'BLĐ',date:'02/05 · 10:00',type:'bld'}]},
+  {id:12,name:'Vệ Sinh Tổng Thể Khuôn Viên Chùa',detail:'Vệ sinh toàn bộ khuôn viên, các điện thờ, nhà vệ sinh công cộng trước ngày đại lễ.',time:'10/05 → 13/05/2026',tags:['done'],bans:['Ban Hậu Cần','Ban Tăng Chúng'],
+   phoi_hop:[{id:'op12_1',text:'Đã hoàn thành vệ sinh toàn bộ khuôn viên. Đã bố trí 40 chậu hoa dọc lối vào chánh điện.',author:'Ban Hậu Cần',date:'05/05 · 16:00',likes:7,liked:false,edited:false}],
+   sp_bld:[{text:'Khuôn viên sạch sẽ, trang nghiêm — thể hiện tâm cung kính với ngày lễ.',author:'BLĐ',date:'05/05 · 17:00',type:'bld'}]},
+  {id:16,name:'In Ấn Thẻ Phân Công & Biển Chỉ Dẫn',detail:'In thẻ nhận diện cho tất cả nhân sự ban phối hợp và in biển chỉ dẫn đặt tại các vị trí trong khuôn viên chùa dịp Đại Lễ.',time:'01/05 → 04/05/2026',tags:['done'],bans:['Ban Văn Phòng','Ban Tri Sự'],
+   phoi_hop:[{id:'op16_1',text:'Đã in xong 80 thẻ nhận diện và 25 biển chỉ dẫn. Biển chỉ dẫn đã lắp đặt tại 12 vị trí cố định.',author:'Ban Văn Phòng',date:'04/05 · 15:00',likes:5,liked:false,edited:false}],
+   sp_bld:[{text:'Biển chỉ dẫn phải rõ ràng, dễ đọc. Thẻ nhân sự phải đeo trong suốt thời gian làm việc.',author:'BLĐ',date:'04/05 · 16:30',type:'bld'}]},
+  {id:17,name:'Kiểm Tra An Ninh & Phòng Cháy Chữa Cháy',detail:'Kiểm tra toàn bộ hệ thống PCCC, lối thoát hiểm, phân công nhân sự an ninh 24/7 trong các ngày lễ.',time:'03/05 → 05/05/2026',tags:['done'],bans:['Ban An Ninh'],
+   phoi_hop:[{id:'op17_1',text:'Đã kiểm tra 8 bình chữa cháy, tất cả còn hạn sử dụng. Phân công 6 người trực an ninh theo ca.',author:'Ban An Ninh',date:'05/05 · 17:30',likes:3,liked:false,edited:false}],
+   sp_bld:[{text:'An ninh và PCCC là ưu tiên hàng đầu. Không được để lửa hương gần vật dễ cháy.',author:'BLĐ',date:'05/05 · 18:00',type:'bld'}]},
+];
 
-  /* DONE */
-  {id:12,name:'Vệ Sinh Tổng Thể Khuôn Viên Chùa',
-   detail:'Vệ sinh toàn bộ khuôn viên, các điện thờ, nhà vệ sinh công cộng trước ngày đại lễ. Phát quang bụi rậm, dọn cỏ sân vườn, trang trí lối đi bằng chậu hoa.',
-   time:'10/05 → 13/05/2026',deadline:'13/05/2026',tags:['done'],
-   bans:['Ban Hậu Cần','Ban Tăng Chúng'],
-   phoi_hop:[{text:'Đã hoàn thành vệ sinh toàn bộ khuôn viên. Đã dọn cỏ sân trước, sân sau và lối đi chính. Đã bố trí 40 chậu hoa dọc lối vào chánh điện.',author:'Ban Hậu Cần',date:'05/05 · 16:00'}],
-   sp_bld:[{text:'Khuôn viên sạch sẽ, trang nghiêm — thể hiện tâm cung kính với ngày lễ. Đề nghị giữ vệ sinh xuyên suốt những ngày lễ.',author:'BLĐ',date:'05/05 · 17:00',type:'bld'}]},
-  {id:16,name:'In Ấn Thẻ Phân Công & Biển Chỉ Dẫn',
-   detail:'In thẻ nhận diện cho tất cả nhân sự ban phối hợp và in biển chỉ dẫn đặt tại các vị trí trong khuôn viên chùa dịp Đại Lễ.',
-   time:'01/05 → 04/05/2026',deadline:'04/05/2026',tags:['done'],
-   bans:['Ban Văn Phòng','Ban Tri Sự'],
-   phoi_hop:[{text:'Đã in xong 80 thẻ nhận diện và 25 biển chỉ dẫn. Đã giao cho các ban trưởng nhận thẻ. Biển chỉ dẫn đã lắp đặt tại 12 vị trí cố định.',author:'Ban Văn Phòng',date:'04/05 · 15:00'}],
-   sp_bld:[{text:'Biển chỉ dẫn phải rõ ràng, dễ đọc. Thẻ nhân sự phải đeo trong suốt thời gian làm việc — không được bỏ thẻ.',author:'BLĐ',date:'04/05 · 16:30',type:'bld'}]},
-  {id:17,name:'Kiểm Tra An Ninh & Phòng Cháy Chữa Cháy',
-   detail:'Kiểm tra toàn bộ hệ thống PCCC, lối thoát hiểm, phân công nhân sự an ninh 24/7 trong các ngày lễ.',
-   time:'03/05 → 05/05/2026',deadline:'05/05/2026',tags:['done'],
-   bans:['Ban An Ninh'],
-   phoi_hop:[{text:'Đã kiểm tra 8 bình chữa cháy, tất cả còn hạn sử dụng. Phân công 6 người trực an ninh theo ca. Lối thoát hiểm đã được thông thoáng và đánh dấu rõ ràng.',author:'Ban An Ninh',date:'05/05 · 17:30'}],
-   sp_bld:[{text:'An ninh và PCCC là ưu tiên hàng đầu. Không được để lửa hương gần vật dễ cháy. Nhân sự trực phải có mặt đúng giờ, không bỏ vị trí.',author:'BLĐ',date:'05/05 · 18:00',type:'bld'}]},
+const outgoingTasks=[
+  {id:'o1',name:'Soạn Thảo Công Văn Xin Phép UBND',detail:'Ban Tri Sự yêu cầu Ban Văn Phòng soạn thảo công văn xin phép UBND phường về việc tổ chức Đại Lễ Phật Đản và sử dụng bãi đỗ xe ngoài khuôn viên.',time:'06/05 → 07/05/2026',tags:['urgent'],assignedTo:'Ban Văn Phòng',assignedNote:'Nộp bản nháp trước 17:00 ngày 07/05',progress:60,latestReport:'Đã soạn xong bản nháp, đang chờ trưởng ban ký. Dự kiến gửi UBND sáng 07/05.',reportDate:'05/05 · 16:00'},
+  {id:'o2',name:'Lập Danh Sách Nhân Sự Toàn Bộ Các Ban',detail:'Yêu cầu các ban trưởng nộp danh sách nhân sự tham gia Đại Lễ, bao gồm họ tên, số điện thoại, vị trí phân công.',time:'05/05 → 08/05/2026',tags:['urgent'],assignedTo:'Tất cả Ban Trưởng',assignedNote:'Hạn nộp: 08/05/2026 · 20:00',progress:40,latestReport:'Đã nhận danh sách từ 4/8 ban. Ban Hậu Cần và Ban Lễ Vật chưa nộp.',reportDate:'05/05 · 19:00'},
+  {id:'o3',name:'Thiết Kế Sơ Đồ Bố Trí Khuôn Viên Đại Lễ',detail:'Ban Tri Sự giao Ban Truyền Thông thiết kế sơ đồ bố trí khu vực chánh điện, lễ đài, bãi đỗ xe, khu ẩm thực dịp Đại Lễ.',time:'05/05 → 09/05/2026',tags:['important'],assignedTo:'Ban Truyền Thông',assignedNote:'Duyệt lần cuối với Ban Tri Sự',progress:80,latestReport:'Đã hoàn thành bản thiết kế v2, đã gửi qua email Ban Tri Sự để xét duyệt.',reportDate:'05/05 · 14:30'},
+  {id:'o4',name:'Mua Sắm Bổ Sung Vật Tư Trang Trí',detail:'Ban Tri Sự phê duyệt danh mục bổ sung 200 đèn lồng và 50 phướn lớn. Giao Ban Vật Tư thực hiện mua sắm và bàn giao cho Ban Trang Trí trước 12/05.',time:'06/05 → 12/05/2026',tags:['important'],assignedTo:'Ban Vật Tư',assignedNote:'Bàn giao cho Ban Trang Trí trước 12/05',progress:25,latestReport:'Đang liên hệ 3 nhà cung cấp để so sánh giá. Dự kiến đặt hàng ngày 07/05.',reportDate:'05/05 · 11:00'},
+  {id:'o5',name:'Tập Dượt Đội Hình Rước Phật Lần 2',detail:'Ban Tri Sự yêu cầu Ban Nghi Lễ tổ chức buổi tập dượt đội hình rước Phật lần 2 để đảm bảo đúng nghi thức.',time:'10/05 → 11/05/2026',tags:['important'],assignedTo:'Ban Nghi Lễ',assignedNote:'Báo cáo kết quả sau buổi tập',progress:0,latestReport:'Chưa bắt đầu. Lịch tập dự kiến 10/05 · 08:00 tại sân chánh điện.',reportDate:'05/05 · 09:30'},
+  {id:'o6',name:'Kiểm Kê Tồn Kho Vật Tư Sau Lễ',detail:'Sau khi đại lễ kết thúc, Ban Vật Tư tiến hành kiểm kê toàn bộ vật tư còn lại và lập báo cáo thanh lý gửi Ban Tài Chính.',time:'16/05 → 18/05/2026',tags:[],assignedTo:'Ban Vật Tư',assignedNote:'Gửi báo cáo cho Ban Tài Chính',progress:0,latestReport:'Chưa đến hạn thực hiện.',reportDate:''},
+  {id:'o7',name:'Bố Trí Xe Đưa Đón Chư Tăng',detail:'Ban Tri Sự giao Ban Hậu Cần liên hệ và sắp xếp xe đưa đón chư Tăng từ các tự viện lân cận về tham dự Đại Lễ Phật Đản.',time:'13/05 → 15/05/2026',tags:['waiting'],assignedTo:'Ban Hậu Cần',assignedNote:'Xin xác nhận số lượng chư Tăng trước khi đặt xe',progress:30,latestReport:'Đã liên hệ 4 tự viện, xác nhận 22 chư Tăng. Đang chờ ý kiến BLĐ về số lượng xe cần đặt.',reportDate:'05/05 · 15:00'},
+  {id:'o8',name:'Tổng Kết & Báo Cáo Sau Đại Lễ',detail:'Sau đại lễ, tất cả các ban nộp báo cáo tổng kết công việc, ghi nhận kinh nghiệm và đề xuất cải tiến cho các lễ sau.',time:'16/05 → 20/05/2026',tags:[],assignedTo:'Tất cả Ban Trưởng',assignedNote:'Nộp về Ban Tri Sự trước 20/05',progress:0,latestReport:'Chưa đến hạn. Mẫu báo cáo sẽ gửi sau ngày lễ.',reportDate:''},
 ];
 
 /* ===== STATE ===== */
-let filterStatus='all', filterDate='all', filterBan='all';
-let dateFrom=null, dateTo=null;
+let filterStatus='all',filterDate='all',filterBan='all',sortMode='deadline';
+let currentLoai='phoi-hop',currentStatusTab='active';
 const IPP=5;
-let currentPage=1, filteredList=[];
+let currentPage=1,filteredList=[],currentOutPage=1,filteredOutList=[];
 
-/* ===== DATE FILTER ===== */
+function sortTasks(list){
+  const priority={urgent:0,waiting:1,important:2,normal:3,done:4};
+  return [...list].sort((a,b)=>{
+    if(sortMode==='name') return a.name.localeCompare(b.name,'vi');
+    if(sortMode==='status') return (priority[getStatusTag(a)]??3)-(priority[getStatusTag(b)]??3);
+    const ra=parseRange(a),rb=parseRange(b);
+    return (ra?ra.end.getTime():9e15)-(rb?rb.end.getTime():9e15);
+  });
+}
+
 function matchDate(task){
   if(filterDate==='all') return true;
-  if(filterDate==='yesterday') return coversDay(task, relDate(-1));
-  if(filterDate==='today')     return coversDay(task, TODAY);
-  if(filterDate==='tomorrow')  return coversDay(task, relDate(1));
-  if(filterDate==='week')      return overlaps(task, TODAY, relDate(7));
-  if(filterDate==='custom'){
-    const rf=dateFrom||new Date(0);
-    const rt=dateTo||new Date(9999,0,1);
-    return overlaps(task, rf, rt);
-  }
+  if(filterDate==='today')    return coversDay(task,TODAY);
+  if(filterDate==='tomorrow') return coversDay(task,relDate(1));
+  if(filterDate==='week')     return overlaps(task,TODAY,relDate(7));
   return true;
 }
 
-/* ===== FILTER + SORT ===== */
 function applyFilters(){
+  const kw=(document.getElementById('keywordInput').value||'').toLowerCase().trim();
   filteredList=tasks.filter(t=>{
-    if(filterStatus!=='all' && getStatusTag(t)!==filterStatus) return false;
-    if(filterBan!=='all' && !t.bans.includes(filterBan)) return false;
-    if(!matchDate(t)) return false;
+    const st=getStatusTag(t);
+    if(filterStatus==='normal'){if(st!=='normal')return false;}
+    else if(filterStatus!=='all'&&st!==filterStatus)return false;
+    if(filterBan!=='all'&&!t.bans.includes(filterBan))return false;
+    if(!matchDate(t))return false;
+    if(kw){const h=(t.name+' '+t.detail+' '+t.bans.join(' ')+' '+(t.phoi_hop||[]).map(o=>o.text).join(' ')+' '+(t.sp_bld||[]).map(o=>o.text).join(' ')).toLowerCase();if(!h.includes(kw))return false;}
     return true;
-  }).sort((a,b)=>{
-    const ra=parseRange(a), rb=parseRange(b);
-    const ea=ra?ra.end.getTime():9e15, eb=rb?rb.end.getTime():9e15;
-    return ea-eb;
   });
-  currentPage=1;
-  renderPage();
-  renderPagination();
+  filteredList=sortTasks(filteredList);
+  filteredOutList=outgoingTasks.filter(t=>{
+    if(kw){const h=(t.name+' '+t.detail+' '+t.assignedTo+' '+t.latestReport).toLowerCase();if(!h.includes(kw))return false;}
+    return true;
+  });
+  currentPage=1;currentOutPage=1;
+  renderPage();renderPagination();renderOutPage();renderOutPagination();
 }
 
-/* ===== RENDER ===== */
-function renderOpPhoi(list){
-  if(!list||!list.length) return `<span class="empty-cell">Chưa có ý kiến...</span>`;
-  return list.map(op=>`
-    <div class="opinion-cell">${truncate(op.text,120)}</div>
-    <div class="opinion-author"><span class="ban-tag tag-normal">${op.author}</span> <span>${convertOpDate(op.date)}</span></div>
-  `).join('<hr style="border:none;border-top:1px dashed #c5d9c5;margin:8px 0;">');
+function switchStatusTab(tab){
+  currentStatusTab=tab;
+  document.querySelectorAll('.status-toggle-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('stab-'+tab).classList.add('active');
+  currentPage=1;renderPage();renderPagination();
 }
-function renderOpSP(list){
-  if(!list||!list.length) return `<span class="empty-cell">Chưa có ý kiến...</span>`;
-  return [...list].sort((a,b)=>({sp:0,bld:1}[a.type]??2)-({sp:0,bld:1}[b.type]??2))
-    .map(op=>`<div class="sp-bld-block">
-      <div class="opinion-cell">${truncate(op.text,120)}</div>
-      <div class="opinion-author"><span class="ban-tag ${op.type==='sp'?'tag-sp':op.type==='bld'?'tag-bld':'tag-normal'}">${op.author}</span> <span>${convertOpDate(op.date)}</span></div>
-    </div>`).join('');
+
+/* ===== RENDER OPINION BOXES (new design) ===== */
+function renderOpinionBoxes(task) {
+  const phoi = task.phoi_hop || [];
+  const sp = task.sp_bld || [];
+  if (!phoi.length && !sp.length) return '';
+
+  let html = '<div class="opinions-wrap">';
+
+  // Ban Phoi Hop boxes (blue)
+  phoi.forEach(op => {
+    const likers = sampleLikers[op.id] || [];
+    html += `
+    <div class="op-box op-box-phoi" id="opbox_${op.id}">
+      <div class="op-box-header">
+        <span class="op-box-tag op-box-tag-phoi">${op.author}</span>
+        <span class="op-box-time">${opTimeLabel(op.date)}</span>
+      </div>
+      <div class="op-box-text" id="optext_${op.id}">${truncateWords(op.text, 35)}</div>
+      ${op.edited ? '<div class="op-edited-tag" style="margin-bottom:6px;">· đã chỉnh sửa</div>' : ''}
+      <div class="op-box-actions">
+        <div class="like-wrap" id="likewrap_${op.id}">
+          <button class="op-like-btn ${op.liked ? 'liked' : ''}" onclick="toggleLike('${task.id}','${op.id}',this)">
+            <span>${op.liked ? '👍' : '👍'}</span>
+            <span class="op-like-count">${op.likes}</span>
+            <span style="font-size:12px;opacity:.7;">thích</span>
+          </button>
+          <div class="likes-popup" id="likespopup_${op.id}">
+            <div class="likes-popup-title">Đã thích ❤️</div>
+            ${likers.length === 0
+              ? '<div class="likes-popup-empty">Chưa có ai thích</div>'
+              : likers.map(n => `<div class="likes-popup-item"><div class="likes-popup-avatar">${n.slice(-2)}</div>${n}</div>`).join('')}
+          </div>
+        </div>
+        <button class="op-edit-btn" onclick="startEdit('${task.id}','${op.id}')">✏️ Sửa</button>
+      </div>
+    </div>`;
+  });
+
+  // Sư Phụ / BLĐ boxes (yellow/amber)
+  [...sp].sort((a,b)=>({sp:0,bld:1}[a.type]??2)-({sp:0,bld:1}[b.type]??2))
+    .forEach(op => {
+      const tagClass = op.type === 'sp' ? 'op-box-tag-sp' : 'op-box-tag-bld';
+      html += `
+    <div class="op-box op-box-sp">
+      <div class="op-box-header">
+        <span class="op-box-tag ${tagClass}">${op.author}</span>
+        <span class="op-box-time">${opTimeLabel(op.date)}</span>
+      </div>
+      <div class="op-box-text">${truncateWords(op.text, 35)}</div>
+    </div>`;
+    });
+
+  html += '</div>';
+  return html;
 }
+
+/* ===== LIKE / EDIT ===== */
+function toggleLike(taskId,opId,btn){
+  const task=tasks.find(t=>String(t.id)===String(taskId));if(!task)return;
+  const op=task.phoi_hop.find(o=>o.id===opId);if(!op)return;
+  op.liked=!op.liked;op.likes+=op.liked?1:-1;
+  const likers=sampleLikers[op.id]||[];
+  if(op.liked){if(!likers.includes('Phan Tuấn Anh'))likers.push('Phan Tuấn Anh');}
+  else{const idx=likers.indexOf('Phan Tuấn Anh');if(idx>=0)likers.splice(idx,1);}
+  sampleLikers[op.id]=likers;
+  btn.innerHTML=`<span>👍</span><span class="op-like-count">${op.likes}</span><span style="font-size:12px;opacity:.7;">thích</span>`;
+  btn.classList.toggle('liked',op.liked);
+}
+
+function startEdit(taskId,opId){
+  const task=tasks.find(t=>String(t.id)===String(taskId));if(!task)return;
+  const op=task.phoi_hop.find(o=>o.id===opId);if(!op)return;
+  const box=document.getElementById('opbox_'+opId);if(!box)return;
+  const textEl=box.querySelector('#optext_'+opId);if(!textEl)return;
+  textEl.innerHTML=`<textarea class="op-edit-area" id="editarea_${opId}">${op.text}</textarea><div class="op-edit-actions"><button class="op-save-btn" onclick="saveEdit('${taskId}','${opId}')">✓ Lưu</button><button class="op-cancel-btn" onclick="cancelEdit('${taskId}','${opId}')">Hủy</button></div>`;
+}
+function saveEdit(taskId,opId){
+  const task=tasks.find(t=>String(t.id)===String(taskId));if(!task)return;
+  const op=task.phoi_hop.find(o=>o.id===opId);if(!op)return;
+  const area=document.getElementById('editarea_'+opId);if(!area)return;
+  op.text=area.value.trim()||op.text;op.edited=true;renderPage();
+}
+function cancelEdit(taskId,opId){
+  const task=tasks.find(t=>String(t.id)===String(taskId));if(!task)return;
+  const op=task.phoi_hop.find(o=>o.id===opId);if(!op)return;
+  const textEl=document.getElementById('optext_'+opId);if(!textEl)return;
+  textEl.innerHTML=truncateWords(op.text,35);
+}
+
+/* ===== MOBILE TOGGLE (for outgoing cards) ===== */
+function mToggle(btn,colId){
+  const card=btn.closest('.task-card');
+  const col=card.querySelector('#'+colId);
+  if(!col)return;
+  const isOpen=col.classList.contains('open');
+  col.classList.toggle('open',!isOpen);
+  btn.classList.toggle('active',!isOpen);
+}
+
+/* ===== RENDER MAIN ===== */
 function renderPage(){
-  const tbody=document.getElementById('taskBody');
+  const body=document.getElementById('taskBody');
+  let display=filteredList.filter(t=>{
+    const st=getStatusTag(t);
+    if(currentStatusTab==='done') return st==='done';
+    return st!=='done';
+  });
   const start=(currentPage-1)*IPP;
-  const slice=filteredList.slice(start,start+IPP);
-  const end=Math.min(start+IPP,filteredList.length);
+  const slice=display.slice(start,start+IPP);
   document.getElementById('pgInfo').innerHTML=
-    filteredList.length===0
-      ? 'Không có công việc nào phù hợp bộ lọc'
-      : `Hiển thị <strong>${start+1} – ${end}</strong> trên tổng <strong>${filteredList.length}</strong> công việc`;
-  if(!slice.length){
-    tbody.innerHTML=`<tr><td colspan="3" style="text-align:center;padding:40px;color:#888;font-style:italic;">Không có công việc nào phù hợp bộ lọc.</td></tr>`;
-    return;
-  }
-  tbody.innerHTML=slice.map(t=>{
+    display.length===0?'Không tìm thấy công việc nào'
+    :`Hiển thị <strong>${start+1}–${Math.min(start+IPP,display.length)}</strong> / <strong>${display.length}</strong>`;
+  if(!slice.length){body.innerHTML=`<div style="text-align:center;padding:40px;color:#bbb;font-size:14px;font-style:italic;">Không tìm thấy công việc nào.</div>`;return;}
+  body.innerHTML=slice.map(t=>{
     const dc=getDotClass(t);
     const tAL=convertTimeRange(t.time);
-    return `<tr>
-      <td>
-        <div class="task-header">
-          ${dc?`<span class="status-dot ${dc}"></span>`:''}
-          <div class="task-name">${t.name}</div>
-        </div>
-        ${t.detail?`<div class="task-detail-txt">${truncate(t.detail,100)}</div>`:''}
-        ${tAL?`<div class="task-time">📅 ${tAL}</div>`:''}
-        <a class="task-detail-link" href="#" onclick="return false;">Chi tiết &rarr;</a>
-      </td>
-      <td>${renderOpPhoi(t.phoi_hop)}</td>
-      <td class="sp-cell">${renderOpSP(t.sp_bld)}</td>
-    </tr>`;
+    return `<div class="task-card">
+      <div class="task-header">
+        ${dc?`<span class="status-dot ${dc}"></span>`:''}
+        <div class="task-name">${t.name}</div>
+        <button class="chi-tiet-btn">Chi tiết</button>
+      </div>
+      ${t.detail?`<div class="task-detail-txt">${truncateWords(t.detail,30)}</div>`:''}
+      ${tAL?`<div class="task-time">📅 ${tAL}</div>`:''}
+      ${renderOpinionBoxes(t)}
+    </div>`;
   }).join('');
 }
+
+/* ===== RENDER GIAO ĐI ===== */
+function renderOutPage(){
+  const body=document.getElementById('outTaskBody');
+  const start=(currentOutPage-1)*IPP;
+  const slice=filteredOutList.slice(start,start+IPP);
+  document.getElementById('pgInfoOut').innerHTML=
+    filteredOutList.length===0?'Không tìm thấy công việc nào'
+    :`Hiển thị <strong>${start+1}–${Math.min(start+IPP,filteredOutList.length)}</strong> / <strong>${filteredOutList.length}</strong>`;
+  if(!slice.length){body.innerHTML=`<div style="text-align:center;padding:40px;color:#bbb;font-size:14px;font-style:italic;">Không tìm thấy công việc nào.</div>`;return;}
+  body.innerHTML=slice.map(t=>{
+    const st=getStatusTag(t);
+    const dotColor=getDotColor(st);
+    const tAL=convertTimeRange(t.time);
+    const progClass=t.progress===100?'prog-done':t.progress>0?'prog-partial':'prog-none';
+    const uid='o'+t.id;
+    return `<div class="task-card">
+      <div class="task-header">
+        <span class="status-dot" style="background:${dotColor};box-shadow:0 0 0 3px ${dotColor}22;"></span>
+        <div class="task-name">${t.name}</div>
+      </div>
+      <div class="task-detail-txt">${truncateWords(t.detail,30)}</div>
+      ${tAL?`<div class="task-time">📅 ${tAL}</div>`:''}
+      <div class="mobile-toggles">
+        <button class="mtoggle" onclick="mToggle(this,'${uid}_ban')">🏛 Ban được giao <span class="mtoggle-arrow">▼</span></button>
+        <button class="mtoggle" onclick="mToggle(this,'${uid}_prog')">📊 Tiến độ ${t.progress>0?`<span class="mtoggle-count">${t.progress}%</span>`:''} <span class="mtoggle-arrow">▼</span></button>
+      </div>
+      <div class="expand-col" id="${uid}_ban">
+        <div class="expand-label">🏛 Ban Được Giao</div>
+        <div class="assigned-ban">${t.assignedTo}</div>
+        <div class="assigned-note">${t.assignedNote}</div>
+      </div>
+      <div class="expand-col" id="${uid}_prog">
+        <div class="expand-label sp">📊 Tiến Độ & Báo Cáo</div>
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill ${progClass}" style="width:${t.progress}%"></div></div>
+          <span class="progress-pct">${t.progress}%</span>
+        </div>
+        ${t.latestReport?`<div style="font-size:13.5px;color:#111a14;font-weight:500;line-height:1.65;">${truncateWords(t.latestReport,35)}</div>`:''}
+        ${t.reportDate?`<div style="margin-top:5px;font-size:12px;color:var(--burgundy);font-weight:700;">${opTimeLabel(t.reportDate)}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== PAGINATION ===== */
 function renderPagination(){
-  const total=Math.ceil(filteredList.length/IPP);
+  let display=filteredList.filter(t=>{const st=getStatusTag(t);if(currentStatusTab==='done')return st==='done';return st!=='done';});
+  const total=Math.ceil(display.length/IPP);
   const c=document.getElementById('pagination');
   if(total<=1){c.innerHTML='';return;}
   let h=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
   for(let i=1;i<=total;i++){
-    if(total>7&&i>2&&i<total-1&&Math.abs(i-currentPage)>1){
-      if(i===3||i===total-2) h+=`<button class="pg-btn dots">…</button>`;
-      continue;
-    }
+    if(total>7&&i>2&&i<total-1&&Math.abs(i-currentPage)>1){if(i===3||i===total-2)h+=`<button class="pg-btn dots">…</button>`;continue;}
     h+=`<button class="pg-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
   }
   h+=`<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''}>›</button>`;
   c.innerHTML=h;
 }
 function goPage(n){
-  const total=Math.ceil(filteredList.length/IPP);
-  if(n<1||n>total) return;
-  currentPage=n; renderPage(); renderPagination();
+  let display=filteredList.filter(t=>{const st=getStatusTag(t);if(currentStatusTab==='done')return st==='done';return st!=='done';});
+  const total=Math.ceil(display.length/IPP);
+  if(n<1||n>total)return;
+  currentPage=n;renderPage();renderPagination();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderOutPagination(){
+  const total=Math.ceil(filteredOutList.length/IPP);
+  const c=document.getElementById('paginationOut');
+  if(total<=1){c.innerHTML='';return;}
+  let h=`<button class="pg-btn" onclick="goOutPage(${currentOutPage-1})" ${currentOutPage===1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=total;i++){
+    if(total>7&&i>2&&i<total-1&&Math.abs(i-currentOutPage)>1){if(i===3||i===total-2)h+=`<button class="pg-btn dots">…</button>`;continue;}
+    h+=`<button class="pg-btn${i===currentOutPage?' active':''}" onclick="goOutPage(${i})">${i}</button>`;
+  }
+  h+=`<button class="pg-btn" onclick="goOutPage(${currentOutPage+1})" ${currentOutPage===total?'disabled':''}>›</button>`;
+  c.innerHTML=h;
+}
+function goOutPage(n){
+  const total=Math.ceil(filteredOutList.length/IPP);
+  if(n<1||n>total)return;
+  currentOutPage=n;renderOutPage();renderOutPagination();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ===== TOPBAR ===== */
-function initTopbar(){
-  const now=new Date();
-  document.getElementById('dtDuong').textContent=`${THU[now.getDay()]}, ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
-  const lunar=LUNAR_TABLE[isoKey(now)];
-  if(lunar) document.getElementById('dtAm').textContent=`🌙 ${lunar.day} tháng ${lunar.month} Âm Lịch`;
+/* ===== FILTER SHEET ===== */
+let fsTemp={};
+
+const ACC_LABELS = {
+  sort: { deadline:'Ngày hạn', name:'Tên A→Z', status:'Ưu tiên' },
+  status: { all:'Tất cả', urgent:'Khẩn Cấp', important:'Quan Trọng', waiting:'Xin Chỉ Dạy', normal:'Bình Thường' },
+  progress: { active:'Đang làm', done:'Hoàn thành' },
+  date: { all:'Tất cả', today:'Hôm nay', tomorrow:'Ngày mai', week:'7 ngày tới' },
+  loai: { 'phoi-hop':'Phối hợp', 'giao-di':'Giao đi' },
+  ban: { all:'Tất cả' },
+};
+
+function toggleAcc(hdr) {
+  hdr.classList.toggle('open');
+  const body = hdr.nextElementSibling;
+  body.classList.toggle('open');
 }
 
-/* ===== DROPDOWNS ===== */
-document.addEventListener('click',e=>{
-  if(!e.target.closest('.dd-wrap')){
-    document.querySelectorAll('.dd-menu').forEach(m=>m.classList.remove('open'));
-    document.querySelectorAll('.dd-btn').forEach(b=>b.classList.remove('open'));
-  }
-});
-function toggleDD(id){
-  const wrap=document.getElementById(id);
-  const menu=wrap.querySelector('.dd-menu');
-  const btn=wrap.querySelector('.dd-btn');
-  const was=menu.classList.contains('open');
-  document.querySelectorAll('.dd-menu').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.dd-btn').forEach(b=>b.classList.remove('open'));
-  if(!was){menu.classList.add('open');btn.classList.add('open');}
-}
-const SL={all:'Tất cả trạng thái',urgent:'Khẩn Cấp',important:'Quan Trọng',waiting:'Đang Chờ Ý Kiến',overdue:'Quá Hạn',done:'Hoàn Thành'};
-const SC={all:'#adb5bd',urgent:'#c0392b',important:'#e07b39',waiting:'#c9a84c',overdue:'#8e44ad',done:'#27ae60'};
-function selectStatus(val,el){
-  filterStatus=val;
-  document.querySelectorAll('#dd-status-menu .dd-opt').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('status-label').innerHTML=`<span style="width:9px;height:9px;border-radius:50%;background:${SC[val]};display:inline-block;flex-shrink:0;"></span> ${SL[val]}`;
-  document.getElementById('dd-status-menu').classList.remove('open');
-  document.querySelector('#dd-status .dd-btn').classList.remove('open');
-  applyFilters();
-}
-const DL={all:'Tất cả thời gian',yesterday:'Hôm qua',today:'Hôm nay',tomorrow:'Ngày mai',week:'7 ngày tới',custom:'Tùy chọn'};
-function selectDate(val,el){
-  filterDate=val;
-  document.querySelectorAll('#dd-date-menu .dd-opt').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('date-label').innerHTML=`📅 ${DL[val]||val}`;
-  document.getElementById('date-range-row').style.display=val==='custom'?'flex':'none';
-  if(val!=='custom'){
-    document.getElementById('dd-date-menu').classList.remove('open');
-    document.querySelector('#dd-date .dd-btn').classList.remove('open');
-    applyFilters();
+function fsOptTap(btn) {
+  const f = btn.dataset.filter;
+  const v = btn.dataset.val;
+  btn.closest('.fs-acc-body').querySelectorAll('.fs-opt').forEach(o => o.classList.remove('active'));
+  btn.classList.add('active');
+  fsTemp[f] = v;
+  const valEl = document.getElementById('acc-val-' + f);
+  if (valEl) {
+    const banLabel = f === 'ban' && v !== 'all' ? v : null;
+    valEl.textContent = banLabel || (ACC_LABELS[f] && ACC_LABELS[f][v]) || v;
   }
 }
-function applyDateRange(){
-  const f=document.getElementById('dr-from').value;
-  const t=document.getElementById('dr-to').value;
-  dateFrom=f?new Date(f):null; dateTo=t?new Date(t):null;
-  if(dateTo) dateTo.setHours(23,59,59,999);
-  document.getElementById('date-label').innerHTML=`📅 ${f||'...'} → ${t||'...'}`;
-  document.getElementById('dd-date-menu').classList.remove('open');
-  document.querySelector('#dd-date .dd-btn').classList.remove('open');
-  applyFilters();
+
+function openFilterSheet(){
+  fsTemp = { status:filterStatus, sort:sortMode, date:filterDate, loai:currentLoai, ban:filterBan, progress:currentStatusTab };
+  document.querySelectorAll('.fs-opt').forEach(o => {
+    const f = o.dataset.filter, v = o.dataset.val;
+    o.classList.toggle('active', fsTemp[f] === v);
+  });
+  Object.keys(fsTemp).forEach(f => {
+    const valEl = document.getElementById('acc-val-' + f);
+    if (!valEl) return;
+    const v = fsTemp[f];
+    const banLabel = f === 'ban' && v !== 'all' ? v : null;
+    valEl.textContent = banLabel || (ACC_LABELS[f] && ACC_LABELS[f][v]) || v;
+  });
+  document.getElementById('mobKeywordInput').value = document.getElementById('keywordInput').value;
+  document.getElementById('filterSheet').classList.add('open');
+  document.getElementById('filterSheetOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
 }
-function buildBanDD(){
-  const bans=new Set();
-  tasks.forEach(t=>t.bans.forEach(b=>bans.add(b)));
-  const menu=document.getElementById('dd-ban-menu');
-  [...bans].sort().forEach(b=>{
-    const d=document.createElement('div');
-    d.className='dd-opt'; d.textContent=b;
-    d.onclick=()=>selectBan(b,d);
-    menu.appendChild(d);
+
+function closeFilterSheet(){
+  document.getElementById('filterSheet').classList.remove('open');
+  document.getElementById('filterSheetOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  document.querySelectorAll('.fs-acc-header.open').forEach(h => { h.classList.remove('open'); h.nextElementSibling.classList.remove('open'); });
+}
+
+function fsReset(){
+  fsTemp = { status:'all', sort:'deadline', date:'all', loai:'phoi-hop', ban:'all', progress:'active' };
+  document.querySelectorAll('.fs-opt').forEach(o => {
+    const f = o.dataset.filter, v = o.dataset.val;
+    o.classList.toggle('active', fsTemp[f] === v);
+  });
+  Object.keys(fsTemp).forEach(f => {
+    const valEl = document.getElementById('acc-val-' + f);
+    if (valEl) valEl.textContent = (ACC_LABELS[f] && ACC_LABELS[f][fsTemp[f]]) || fsTemp[f];
+  });
+  document.getElementById('mobKeywordInput').value='';
+  document.getElementById('keywordInput').value='';
+}
+
+function fsApply(){
+  const kw = document.getElementById('mobKeywordInput').value;
+  document.getElementById('keywordInput').value = kw;
+  filterStatus = fsTemp.status || 'all';
+  sortMode = fsTemp.sort || 'deadline';
+  filterDate = fsTemp.date || 'all';
+  filterBan = fsTemp.ban || 'all';
+  const newLoai = fsTemp.loai || 'phoi-hop';
+  if (newLoai !== currentLoai) {
+    currentLoai = newLoai;
+    document.getElementById('panel-main').style.display = newLoai !== 'giao-di' ? 'block' : 'none';
+    document.getElementById('panel-giao-di').style.display = newLoai === 'giao-di' ? 'block' : 'none';
+    document.getElementById('statusToggleWrap').style.display = newLoai !== 'giao-di' ? 'flex' : 'none';
+    document.getElementById('contentHdrTitle').textContent = newLoai === 'giao-di' ? 'Công việc giao đi' : 'Đầu mục công việc';
+  }
+  if (fsTemp.progress && fsTemp.progress !== currentStatusTab) switchStatusTab(fsTemp.progress);
+  let n = 0;
+  if (filterStatus !== 'all') n++; if (filterDate !== 'all') n++;
+  if (filterBan !== 'all') n++; if (kw.trim()) n++; if (currentStatusTab !== 'active') n++;
+  const badge = document.getElementById('mobFilterBadge');
+  if (badge) { badge.textContent = n; badge.classList.toggle('show', n > 0); }
+  applyFilters();
+  closeFilterSheet();
+}
+
+function buildFsBanList(){
+  const bans = new Set(); tasks.forEach(t => t.bans.forEach(b => bans.add(b)));
+  const body = document.getElementById('fsBanAccBody');
+  [...bans].sort().forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'fs-opt'; btn.dataset.filter = 'ban'; btn.dataset.val = b;
+    btn.innerHTML = b + '<span class="fs-opt-check">✓</span>';
+    btn.onclick = () => fsOptTap(btn);
+    body.appendChild(btn);
+    ACC_LABELS.ban[b] = b;
   });
 }
-function selectBan(val,el){
-  filterBan=val;
-  document.querySelectorAll('#dd-ban-menu .dd-opt').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('ban-label').innerHTML=`🤝 ${val==='all'?'Tất cả ban':val}`;
-  document.getElementById('dd-ban-menu').classList.remove('open');
-  document.querySelector('#dd-ban .dd-btn').classList.remove('open');
-  applyFilters();
-}
 
-initTopbar();
-buildBanDD();
+/* ===== INIT ===== */
+buildFsBanList();
 applyFilters();
 </script>
 </body>
